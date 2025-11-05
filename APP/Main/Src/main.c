@@ -18,9 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usb_device.h"
 #include "gpio.h"
-#include "usbd_cdc_if.h"
+#include "usb.h"
+#include "tusb.h"
+#include "usart.h"
+#include "board_api.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -28,7 +30,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+void cdc_task(void);
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -64,7 +66,7 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-
+	bool ret=0;
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
@@ -86,18 +88,30 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
-  MX_USB_DEVICE_Init();
+	MX_USART1_UART_Init();
+	printf("uart init seccod!\n");
+	MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
+  // init device stack on configured roothub port
+  tusb_rhport_init_t dev_init = {
+    .role = TUSB_ROLE_DEVICE,
+    .speed = TUSB_SPEED_AUTO
+  };
+  tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
+  board_init_after_tusb();
+	
+	printf("ret=%d!\n",ret);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		tud_task();
+		cdc_task();
     /* USER CODE END WHILE */
-
+			
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -150,6 +164,53 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+//--------------------------------------------------------------------+
+// USB CDC
+//--------------------------------------------------------------------+
+void cdc_task(void) {
+
+  // 处理CDC接口0数据
+  if (tud_cdc_n_available(0)) {
+    uint8_t buf[64];
+    uint32_t count = tud_cdc_n_read(0, buf, sizeof(buf));
+    
+    // 透传到CDC接口1
+    tud_cdc_n_write(1, buf, count);
+    tud_cdc_n_write_flush(1);
+    
+    // 本地回显
+    tud_cdc_n_write(0, buf, count);
+    tud_cdc_n_write_flush(0);
+  }
+  
+  // 处理CDC接口1数据
+  if (tud_cdc_n_available(1)) {
+    uint8_t buf[64];
+    uint32_t count = tud_cdc_n_read(1, buf, sizeof(buf));
+    
+    // 透传到CDC接口0
+    tud_cdc_n_write(0, buf, count);
+    tud_cdc_n_write_flush(0);
+  }
+}
+
+
+void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
+  if (itf == 0) {
+    // CDC接口0状态变化
+    if (dtr) {
+//      // 终端已连接，初始化UART
+//      uart_init(UART_ID, 115200);
+//      gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+//      gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+    } else {
+//      // 终端已断开，关闭UART
+//      uart_deinit(UART_ID);
+    }
+  }
+}
+
 
 /* USER CODE END 4 */
 

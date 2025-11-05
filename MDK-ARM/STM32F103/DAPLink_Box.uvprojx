@@ -10,8 +10,8 @@
       <TargetName>DAPLink_Box</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
+      <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103C8</Device>
@@ -323,13 +323,13 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>1</wLevel>
             <uThumb>0</uThumb>
-            <uSurpInc>1</uSurpInc>
+            <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>5</v6Lang>
+            <v6Lang>3</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xB</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Mid\ST\STM32_USB_Device_Library\Core\Inc;..\..\Mid\ST\STM32_USB_Device_Library\Class\CDC\Inc;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\inc;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -414,35 +414,60 @@
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\stm32f1xx_it.c</FilePath>
             </File>
+            <File>
+              <FileName>cdc_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\USB_DEVICE\cdc_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\board.c</FilePath>
+            </File>
+            <File>
+              <FileName>family.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\family.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_descriptors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\usb_descriptors.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\usart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/USB_DEVICE/App</GroupName>
+          <GroupName>Application/DAP</GroupName>
           <Files>
             <File>
-              <FileName>usb_device.c</FileName>
+              <FileName>DAP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\USB_DEVICE\App\usb_device.c</FilePath>
+              <FilePath>..\..\APP\DAP\DAP.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_cdc_if.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\USB_DEVICE\App\usbd_cdc_if.c</FilePath>
+              <FilePath>..\..\APP\DAP\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_desc.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\USB_DEVICE\App\usbd_desc.c</FilePath>
+              <FilePath>..\..\APP\DAP\SW_DP.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Application/User/USB_DEVICE/Target</GroupName>
-          <Files>
             <File>
-              <FileName>usbd_conf.c</FileName>
+              <FileName>SWO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\USB_DEVICE\Target\usbd_conf.c</FilePath>
+              <FilePath>..\..\APP\DAP\SWO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -752,27 +777,62 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/USB_Device_Library</GroupName>
+          <GroupName>Drivers/STM32F1xx_HAL_Driver/DAP</GroupName>
           <Files>
             <File>
-              <FileName>usbd_core.c</FileName>
+              <FileName>dap_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Mid\ST\STM32_USB_Device_Library\Core\Src\usbd_core.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_flash.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_ctlreq.c</FileName>
+              <FileName>dap_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Mid\ST\STM32_USB_Device_Library\Core\Src\usbd_ctlreq.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_ioreq.c</FileName>
+              <FileName>dap_st_usbd_hid.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Mid\ST\STM32_USB_Device_Library\Core\Src\usbd_ioreq.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_st_usbd_hid.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>TinyUsb</GroupName>
+          <Files>
+            <File>
+              <FileName>cdc_device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\class\cdc\cdc_device.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_cdc.c</FileName>
+              <FileName>msc_device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Mid\ST\STM32_USB_Device_Library\Class\CDC\Src\usbd_cdc.c</FilePath>
+              <FilePath>..\..\TinyUSB\scr\class\msc\msc_device.c</FilePath>
+            </File>
+            <File>
+              <FileName>tusb_fifo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\common\tusb_fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\device\usbd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\device\usbd_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>dcd_stm32_fsdev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\portable\st\stm32_fsdev\dcd_stm32_fsdev.c</FilePath>
+            </File>
+            <File>
+              <FileName>tusb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\TinyUSB\scr\tusb.c</FilePath>
             </File>
           </Files>
         </Group>

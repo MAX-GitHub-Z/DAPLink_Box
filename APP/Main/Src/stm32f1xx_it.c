@@ -81,17 +81,17 @@ void NMI_Handler(void)
 /**
   * @brief This function handles Hard fault interrupt.
   */
-void HardFault_Handler(void)
-{
-  /* USER CODE BEGIN HardFault_IRQn 0 */
+//void HardFault_Handler(void)
+//{
+//  /* USER CODE BEGIN HardFault_IRQn 0 */
 
-  /* USER CODE END HardFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
-  }
-}
+//  /* USER CODE END HardFault_IRQn 0 */
+//  while (1)
+//  {
+//    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+//    /* USER CODE END W1_HardFault_IRQn 0 */
+//  }
+//}
 
 /**
   * @brief This function handles Memory management fault.
@@ -180,16 +180,16 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
+//void SysTick_Handler(void)
+//{
+//  /* USER CODE BEGIN SysTick_IRQn 0 */
 
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
+//  /* USER CODE END SysTick_IRQn 0 */
+//  HAL_IncTick();
+//  /* USER CODE BEGIN SysTick_IRQn 1 */
 
-  /* USER CODE END SysTick_IRQn 1 */
-}
+//  /* USER CODE END SysTick_IRQn 1 */
+//}
 
 /******************************************************************************/
 /* STM32F1xx Peripheral Interrupt Handlers                                    */
@@ -201,16 +201,16 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles USB low priority or CAN RX0 interrupts.
   */
-void USB_LP_CAN1_RX0_IRQHandler(void)
-{
-  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 0 */
+//void USB_LP_CAN1_RX0_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 0 */
 
-  /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
-  HAL_PCD_IRQHandler(&hpcd_USB_FS);
-  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
-
-  /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
-}
+//  /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
+//  //HAL_PCD_IRQHandler(&hpcd_USB_FS);
+//  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
+//	tud_int_handler(0);  // 通知 TinyUSB 发生 USB 中断，端口 0
+//  /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
+//}
 
 /* USER CODE BEGIN 1 */
 
