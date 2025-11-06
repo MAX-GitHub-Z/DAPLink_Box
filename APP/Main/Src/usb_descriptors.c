@@ -32,21 +32,27 @@
  * Auto ProductID layout's Bitmap:
  *   [MSB]         HID | MSC | CDC          [LSB]
  */
+ 
 #define PID_MAP(itf, n)  ((CFG_TUD_##itf) ? (1 << (n)) : 0)
-#define USB_PID           (0x4000 | PID_MAP(CDC, 0) | PID_MAP(MSC, 1) | PID_MAP(HID, 2) | \
-                           PID_MAP(MIDI, 3) | PID_MAP(VENDOR, 4) )
 
+#ifdef CONFIG_TUSB_PID
+#define USB_PID CONFIG_TUSB_PID
+#else
+#define USB_PID           (0x4000 | PID_MAP(CDC, 0) | PID_MAP(MSC, 1) | PID_MAP(HID, 2) | \
+                         PID_MAP(MIDI, 3) | PID_MAP(VENDOR, 4) )
+#endif
+
+#ifdef CONFIG_TUSB_VID
+#define USB_VID CONFIG_TUSB_VID
+#else
 #define USB_VID   0xCafe
+#endif
+
 #define USB_BCD   0x0200
 
-/*
-#define CONFIG_TUSB_VID					0x0483
-#define CONFIG_TUSB_PID					0x572A
 
-#define CONFIG_TUSB_MANUFACTURER 		"CMSIS-DAP by ARM"
-#define CONFIG_TUSB_PRODUCT 				"CMSIS-DAP"
-#define CONFIG_TUSB_SERIAL_NUM 			"CMSIS-DAP"
-*/
+
+
 //--------------------------------------------------------------------+
 // Device Descriptors
 //--------------------------------------------------------------------+
@@ -88,6 +94,7 @@ enum {
   ITF_NUM_CDC_DATA,
 	ITF_NUM_CDC2,
 	ITF_NUM_CDC2_DATA,
+	ITF_NUM_HID,
   //ITF_NUM_MSC,
   ITF_NUM_TOTAL
 };
@@ -131,13 +138,30 @@ enum {
   #define EPNUM_CDC2_OUT     0x03
   #define EPNUM_CDC2_IN      0x84
 	
+	#define EPNUM_HID_IN   	0x85
+	#define EPNUM_HID_OUT   0x04
 
 //  #define EPNUM_MSC_OUT     0x03
 //  #define EPNUM_MSC_IN      0x83
 
 #endif
 
-#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*2 )//+ TUD_MSC_DESC_LEN)
+#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*2 + TUD_HID_INOUT_DESC_LEN)//+ TUD_MSC_DESC_LEN)
+
+
+uint8_t const desc_hid_report[] =
+{
+	TUD_HID_REPORT_DESC_GENERIC_INOUT(CFG_TUD_HID_TX_BUFSIZE)
+};
+
+// Invoked when received GET HID REPORT DESCRIPTOR
+// Application return pointer to descriptor
+// Descriptor contents must exist long enough for transfer to complete
+uint8_t const * tud_hid_descriptor_report_cb(uint8_t instance)
+{
+  (void) instance;
+  return desc_hid_report;
+}
 
 // full speed configuration
 static uint8_t const desc_fs_configuration[] = {
@@ -148,6 +172,10 @@ static uint8_t const desc_fs_configuration[] = {
     TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 4, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, 64),
 
 		TUD_CDC_DESCRIPTOR(ITF_NUM_CDC2, 5, EPNUM_CDC2_NOTIF, 8, EPNUM_CDC2_OUT, EPNUM_CDC2_IN, 64),
+	
+			  // Interface number, string index, protocol, report descriptor len, EP In address, size & polling interval
+		TUD_HID_INOUT_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report), EPNUM_HID_OUT,EPNUM_HID_IN, CFG_TUD_HID_EP_BUFSIZE, 0),
+
     // Interface number, string index, EP Out & EP In address, EP size
 //    TUD_MSC_DESCRIPTOR(ITF_NUM_MSC, 5, EPNUM_MSC_OUT, EPNUM_MSC_IN, 64),
 };
@@ -241,10 +269,10 @@ enum {
 // array of pointer to string descriptors
 static char const *string_desc_arr[] = {
     (const char[]) { 0x09, 0x04 }, // 0: is supported language is English (0x0409)
-    "TinyUSB",                     // 1: Manufacturer
-    "TinyUSB Device",              // 2: Product
-    NULL,                          // 3: Serials will use unique ID if possible
-    "TinyUSB CDC",                 // 4: CDC Interface
+    CONFIG_TUSB_MANUFACTURER,                     // 1: Manufacturer
+    CONFIG_TUSB_PRODUCT,              // 2: Product
+    "0001A0000000",                          // 3: Serials will use unique ID if possible
+    CONFIG_TUSB_SERIAL_NUM,                 // 4: CDC Interface
     //"TinyUSB MSC",                 // 5: MSC Interface
 };
 

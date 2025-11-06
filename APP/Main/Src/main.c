@@ -23,6 +23,7 @@
 #include "tusb.h"
 #include "usart.h"
 #include "board_api.h"
+#include "DAP.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -66,7 +67,7 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-	bool ret=0;
+
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
@@ -92,6 +93,7 @@ int main(void)
 	printf("uart init seccod!\n");
 	MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
+	
   // init device stack on configured roothub port
   tusb_rhport_init_t dev_init = {
     .role = TUSB_ROLE_DEVICE,
@@ -100,8 +102,8 @@ int main(void)
   tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
   board_init_after_tusb();
-	
-	printf("ret=%d!\n",ret);
+
+	DAP_Setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -209,6 +211,44 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
 //      uart_deinit(UART_ID);
     }
   }
+}
+
+
+
+// Invoked when sent REPORT successfully to host
+// Application can use this to send the next report
+// Note: For composite reports, report[0] is report ID
+void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint16_t len)
+{
+  (void) instance;
+  (void) len;
+
+}
+// Invoked when received SET_REPORT control request or
+// received data on OUT endpoint ( Report ID = 0, Type = 0 )
+uint8_t hid_tx_data_buf[CFG_TUD_HID_EP_BUFSIZE];
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
+{
+  (void) instance;
+	   uint32_t response_size = TU_MIN(CFG_TUD_HID_EP_BUFSIZE, bufsize);
+    DAP_ExecuteCommand(buffer, hid_tx_data_buf);
+    tud_hid_n_report(instance, report_id, hid_tx_data_buf, response_size);
+  
+}
+
+// Invoked when received GET_REPORT control request
+// Application must fill buffer report's content and return its length.
+// Return zero will cause the stack to STALL request
+uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
+{
+  // TODO not Implemented
+  (void) instance;
+  (void) report_id;
+  (void) report_type;
+  (void) buffer;
+  (void) reqlen;
+
+  return 0;
 }
 
 

@@ -94,7 +94,7 @@
 //------------- CLASS -------------//
 #define CFG_TUD_CDC              2
 #define CFG_TUD_MSC              0
-#define CFG_TUD_HID              0
+#define CFG_TUD_HID              1
 #define CFG_TUD_MIDI             0
 #define CFG_TUD_VENDOR           0
 
@@ -110,6 +110,8 @@
 // MSC Buffer size of Device Mass storage
 #define CFG_TUD_MSC_EP_BUFSIZE   512
 
+// HID buffer size Should be sufficient to hold ID (if any) + Data
+#define CFG_TUD_HID_EP_BUFSIZE    64
 
 
 
@@ -120,9 +122,17 @@
 // 启用调试输出（仅开发阶段）
 #define CFG_TUSB_DEBUG           3
 
+/***************************HID Config**********************/
+#define CONFIG_TUSB_VID					0x0483
+#define CONFIG_TUSB_PID					0x572A
 
+#define CONFIG_TUSB_MANUFACTURER 		"CMSIS-DAP by ARM"
+#define CONFIG_TUSB_PRODUCT 				"CMSIS-DAP"
+#define CONFIG_TUSB_SERIAL_NUM 			"CMSIS-DAP"
 
+#define CFG_TUD_HID_TX_BUFSIZE   64
 
+/***************************HID Config**********************/
 #ifdef __cplusplus
  }
 #endif
