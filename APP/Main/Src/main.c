@@ -170,6 +170,7 @@ void SystemClock_Config(void)
 //--------------------------------------------------------------------+
 // USB CDC
 //--------------------------------------------------------------------+
+
 void cdc_task(void) {
 
   // 处理CDC接口0数据
@@ -195,10 +196,12 @@ void cdc_task(void) {
     tud_cdc_n_write(0, buf, count);
     tud_cdc_n_write_flush(0);
   }
+
 }
 
 
 void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
+
   if (itf == 0) {
     // CDC接口0状态变化
     if (dtr) {
@@ -211,6 +214,7 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
 //      uart_deinit(UART_ID);
     }
   }
+
 }
 
 
@@ -229,11 +233,11 @@ void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint16_
 uint8_t hid_tx_data_buf[CFG_TUD_HID_EP_BUFSIZE];
 void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
 {
-  (void) instance;
-	   uint32_t response_size = TU_MIN(CFG_TUD_HID_EP_BUFSIZE, bufsize);
+    (void) report_type;
+
+    uint32_t response_size = TU_MIN(CFG_TUD_HID_EP_BUFSIZE, bufsize);
     DAP_ExecuteCommand(buffer, hid_tx_data_buf);
     tud_hid_n_report(instance, report_id, hid_tx_data_buf, response_size);
-  
 }
 
 // Invoked when received GET_REPORT control request

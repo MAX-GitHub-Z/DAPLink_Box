@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7,STM32F1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\inc;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -374,7 +374,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--info=summarysizes --info=unused --info=totals</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -415,11 +415,6 @@
               <FilePath>..\..\APP\Main\Src\stm32f1xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>cdc_user.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\APP\USB_DEVICE\cdc_user.c</FilePath>
-            </File>
-            <File>
               <FileName>usb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\usb.c</FilePath>
@@ -444,30 +439,20 @@
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\usart.c</FilePath>
             </File>
+            <File>
+              <FileName>DAP_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\DAP\DAP_gpio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/DAP</GroupName>
+          <GroupName>Drivers/CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>DAP.c</FileName>
+              <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\DAP\DAP.c</FilePath>
-            </File>
-            <File>
-              <FileName>JTAG_DP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\APP\DAP\JTAG_DP.c</FilePath>
-            </File>
-            <File>
-              <FileName>SW_DP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\APP\DAP\SW_DP.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\APP\DAP\SWO.c</FilePath>
+              <FilePath>..\..\APP\Main\Src\system_stm32f1xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -767,32 +752,37 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
+          <GroupName>CMSIS-DAP</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f1xx.c</FileName>
+              <FileName>DAP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\APP\Main\Src\system_stm32f1xx.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/STM32F1xx_HAL_Driver/DAP</GroupName>
-          <Files>
-            <File>
-              <FileName>dap_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_flash.c</FilePath>
+              <FilePath>..\..\CMSIS-DAP\Source\DAP.c</FilePath>
             </File>
             <File>
-              <FileName>dap_gpio.c</FileName>
+              <FileName>JTAG_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_gpio.c</FilePath>
+              <FilePath>..\..\CMSIS-DAP\Source\JTAG_DP.c</FilePath>
             </File>
             <File>
-              <FileName>dap_st_usbd_hid.c</FileName>
+              <FileName>SW_DP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Drivers\STM32F1xx_HAL_Driver\STM32F1_DAP\src\dap_st_usbd_hid.c</FilePath>
+              <FilePath>..\..\CMSIS-DAP\Source\SW_DP.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\SWO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_vendor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\DAP_vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\UART.c</FilePath>
             </File>
           </Files>
         </Group>

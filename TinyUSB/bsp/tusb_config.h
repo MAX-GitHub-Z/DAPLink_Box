@@ -41,7 +41,7 @@
 
 // RHPort max operational speed can defined by board.mk
 #ifndef BOARD_TUD_MAX_SPEED
-#define BOARD_TUD_MAX_SPEED   OPT_MODE_DEFAULT_SPEED
+#define BOARD_TUD_MAX_SPEED   OPT_MODE_FULL_SPEED
 #endif
 
 //--------------------------------------------------------------------
@@ -58,8 +58,9 @@
 #define CFG_TUSB_OS           OPT_OS_NONE
 #endif
 
+// 启用调试输出（仅开发阶段）
 #ifndef CFG_TUSB_DEBUG
-#define CFG_TUSB_DEBUG        0
+#define CFG_TUSB_DEBUG        1
 #endif
 
 // Enable Device stack
@@ -83,6 +84,8 @@
 #define CFG_TUSB_MEM_ALIGN    __attribute__ ((aligned(4)))
 #endif
 
+#define CFG_TUSB_RHPORT0_MODE       (OPT_MODE_DEVICE | BOARD_DEVICE_RHPORT_SPEED)
+
 //--------------------------------------------------------------------
 // DEVICE CONFIGURATION
 //--------------------------------------------------------------------
@@ -101,11 +104,11 @@
 #define CFG_TUD_CDC_NOTIFY        1 // Enable use of notification endpoint
 
 // CDC FIFO size of TX and RX
-#define CFG_TUD_CDC_RX_BUFSIZE   256
-#define CFG_TUD_CDC_TX_BUFSIZE   256
+#define CFG_TUD_CDC_RX_BUFSIZE   64
+#define CFG_TUD_CDC_TX_BUFSIZE   64
 
 // CDC Endpoint transfer buffer size, more is faster
-#define CFG_TUD_CDC_EP_BUFSIZE   512
+#define CFG_TUD_CDC_EP_BUFSIZE   16
 
 // MSC Buffer size of Device Mass storage
 #define CFG_TUD_MSC_EP_BUFSIZE   512
@@ -119,8 +122,8 @@
 
 //#define CFG_TUD_MAX_SPEED   		OPT_MODE_FULL_SPEED   // 定义设备运行速度，例如全速
 
-// 启用调试输出（仅开发阶段）
-#define CFG_TUSB_DEBUG           3
+
+
 
 /***************************HID Config**********************/
 #define CONFIG_TUSB_VID					0x0483

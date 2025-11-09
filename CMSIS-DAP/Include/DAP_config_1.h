@@ -34,7 +34,20 @@
 
 extern void vResetTarget(uint8_t bit);
 
+typedef const struct
+{
+  void  (* LedConnected)  (uint16_t);
+  void  (* LedRunning)    (uint16_t);
+} CoreDescriptor_t;
 
+extern const CoreDescriptor_t * pCoreDescriptor;
+
+typedef const struct
+{
+  void    (* UserInit)  (CoreDescriptor_t * core);
+  uint32_t  (* UserProcess) (const uint8_t *, uint8_t *);
+  void    (* UserAbort) (void);
+} UserAppDescriptor_t;
 
 #if  !defined ( BLUEPILL      )  \
   && !defined ( BOARD_V1      ) \
@@ -59,8 +72,7 @@ Provides definitions about:
 - Optional information about a connected Target Device (for Evaluation Boards).
 */
 
-//#include <stm32f10x.h>
-#include "stm32f1xx_hal.h"
+#include <stm32f10x.h>
 
 /// Processor Clock of the Cortex-M MCU used in the Debug Unit.
 /// This value is used to calculate the SWD/JTAG clock speed.
@@ -111,11 +123,11 @@ Provides definitions about:
 /// This configuration settings is used to optimized the communication performance with the
 /// debugger and depends on the USB peripheral. For devices with limited RAM or USB buffer the
 /// setting can be reduced (valid range is 1 .. 255). Change setting to 4 for High-Speed USB.
-#define DAP_PACKET_COUNT        64      ///< Buffers: 64 = Full-Speed, 4 = High-Speed.
+#define DAP_PACKET_COUNT        1      ///< Buffers: 64 = Full-Speed, 4 = High-Speed.
 
 /// Indicate that UART Serial Wire Output (SWO) trace is available.
 /// This information is returned by the command \ref DAP_Info as part of <b>Capabilities</b>.
-#define SWO_UART                0       ///< SWO UART:  1 = available, 0 = not available.
+#define SWO_UART                1       ///< SWO UART:  1 = available, 0 = not available.
 
 /// Maximum SWO UART Baudrate.
 #define SWO_UART_MAX_BAUDRATE   1000000U  ///< 1MHz, SWO UART Maximum Baudrate in Hz.
@@ -126,7 +138,7 @@ Provides definitions about:
 #define SWO_MANCHESTER          0       ///< SWO Manchester:  1 = available, 0 = not available.
 
 /// SWO Trace Buffer Size.
-#define SWO_BUFFER_SIZE         4096U   ///< SWO Trace Buffer Size in bytes (must be 2^n).
+#define SWO_BUFFER_SIZE         64U   ///< SWO Trace Buffer Size in bytes (must be 2^n).
 
 /// SWO Streaming Trace.
 #define SWO_STREAM              0       ///< SWO Streaming Trace: 1 = available, 0 = not available.
@@ -482,7 +494,7 @@ typedef enum Pin_e {
   do {                      \
     /* GPIO_Mode_Out_OD | GPIO_Speed_50MHz */ \
     PIN_nRESET_PORT->CRL = (PIN_nRESET_PORT->CRL & ~PIN_MODE_MASK(PIN_nRESET_PIN))  \
-    | PIN_MODE(((GPIO_Mode_Out_OD | GPIO_SPEED_FREQ_HIGH) & 0x0F), PIN_nRESET_PIN); \
+    | PIN_MODE(((GPIO_Mode_Out_OD | GPIO_Speed_50MHz) & 0x0F), PIN_nRESET_PIN); \
     PIN_nRESET_PORT->BRR = PIN_nRESET_MASK; \
   } while (0)
 
@@ -811,22 +823,14 @@ It is recommended to provide the following LEDs for status indication:
           - 1: Connect LED ON: debugger is connected to CMSIS-DAP Debug Unit.
           - 0: Connect LED OFF: debugger is not connected to CMSIS-DAP Debug Unit.
 */
-__STATIC_INLINE void LED_CONNECTED_OUT(uint32_t bit)
-{
-    if (bit & 1)
-        LED_CONNECTED_PORT->BRR = LED_CONNECTED_MASK; // LED on
-    else
-        LED_CONNECTED_PORT->BSRR = LED_CONNECTED_MASK;// LED off
-}
+#define LED_CONNECTED_OUT(b)  pCoreDescriptor->LedConnected(b)
+
 /** Debug Unit: Set status Target Running LED.
 \param bit status of the Target Running LED.
-           - 1: Target Running LED ON: program execution in target started.
-           - 0: Target Running LED OFF: program execution in target stopped.
+          - 1: Target Running LED ON: program execution in target started.
+          - 0: Target Running LED OFF: program execution in target stopped.
 */
-__STATIC_INLINE void LED_RUNNING_OUT(uint32_t bit)
-{
-    ;             // Not available
-}
+#define LED_RUNNING_OUT(b)    pCoreDescriptor->LedRunning(b)
 
 ///@}
 
@@ -866,7 +870,7 @@ when a device needs a time-critical unlock sequence that enables the debug port.
 */
 __STATIC_INLINE uint8_t RESET_TARGET(void)
 {
-  return (1); // change to '1' when a device reset sequence is implemented
+  return (0); // change to '1' when a device reset sequence is implemented
 }
 
 ///@}

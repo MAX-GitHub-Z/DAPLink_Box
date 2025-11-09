@@ -90,11 +90,11 @@ uint8_t const *tud_descriptor_device_cb(void) {
 //--------------------------------------------------------------------+
 
 enum {
-  ITF_NUM_CDC = 0,
+	ITF_NUM_HID = 0,
+  ITF_NUM_CDC ,
   ITF_NUM_CDC_DATA,
 	ITF_NUM_CDC2,
 	ITF_NUM_CDC2_DATA,
-	ITF_NUM_HID,
   //ITF_NUM_MSC,
   ITF_NUM_TOTAL
 };
@@ -130,23 +130,23 @@ enum {
   #define EPNUM_MSC_IN      0x85
 
 #else
-  #define EPNUM_CDC_NOTIF   0x81
+  #define EPNUM_CDC_NOTIF   0x82
   #define EPNUM_CDC_OUT     0x02
-  #define EPNUM_CDC_IN      0x82
+  #define EPNUM_CDC_IN      0x83
 	
-  #define EPNUM_CDC2_NOTIF   0x83
+  #define EPNUM_CDC2_NOTIF   0x84
   #define EPNUM_CDC2_OUT     0x03
-  #define EPNUM_CDC2_IN      0x84
+  #define EPNUM_CDC2_IN      0x85
 	
-	#define EPNUM_HID_IN   	0x85
-	#define EPNUM_HID_OUT   0x04
+	#define EPNUM_HID_IN   	0x81
+	#define EPNUM_HID_OUT   0x01
 
 //  #define EPNUM_MSC_OUT     0x03
 //  #define EPNUM_MSC_IN      0x83
 
 #endif
 
-#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*2 + TUD_HID_INOUT_DESC_LEN)//+ TUD_MSC_DESC_LEN)
+#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*CFG_TUD_CDC + TUD_HID_INOUT_DESC_LEN)//+ TUD_MSC_DESC_LEN)
 
 
 uint8_t const desc_hid_report[] =
@@ -168,10 +168,10 @@ static uint8_t const desc_fs_configuration[] = {
     // Config number, interface count, string index, total length, attribute, power in mA
     TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, 0x00, 100),
 
-    //  
-    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 4, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, 64),
+//    //  
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 4, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, CFG_TUD_CDC_EP_BUFSIZE),
 
-		TUD_CDC_DESCRIPTOR(ITF_NUM_CDC2, 5, EPNUM_CDC2_NOTIF, 8, EPNUM_CDC2_OUT, EPNUM_CDC2_IN, 64),
+		TUD_CDC_DESCRIPTOR(ITF_NUM_CDC2, 5, EPNUM_CDC2_NOTIF, 8, EPNUM_CDC2_OUT, EPNUM_CDC2_IN, CFG_TUD_CDC_EP_BUFSIZE),
 	
 			  // Interface number, string index, protocol, report descriptor len, EP In address, size & polling interval
 		TUD_HID_INOUT_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report), EPNUM_HID_OUT,EPNUM_HID_IN, CFG_TUD_HID_EP_BUFSIZE, 0),
@@ -266,12 +266,13 @@ enum {
   STRID_SERIAL,
 };
 
+static char uid_str[9];
 // array of pointer to string descriptors
 static char const *string_desc_arr[] = {
     (const char[]) { 0x09, 0x04 }, // 0: is supported language is English (0x0409)
     CONFIG_TUSB_MANUFACTURER,                     // 1: Manufacturer
     CONFIG_TUSB_PRODUCT,              // 2: Product
-    "0001A0000000",                          // 3: Serials will use unique ID if possible
+    uid_str,                          // 3: Serials will use unique ID if possible
     CONFIG_TUSB_SERIAL_NUM,                 // 4: CDC Interface
     //"TinyUSB MSC",                 // 5: MSC Interface
 };
@@ -284,15 +285,18 @@ uint16_t const *tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
   (void) langid;
   size_t chr_count;
 
+	uint32_t *des = (uint32_t*)0x1FFFF7E8;
+  sprintf(uid_str, "%08X", des[2]);
+	
   switch ( index ) {
     case STRID_LANGID:
       memcpy(&_desc_str[1], string_desc_arr[0], 2);
       chr_count = 1;
       break;
 
-    case STRID_SERIAL:
-      chr_count = board_usb_get_serial(_desc_str + 1, 32);
-      break;
+//    case STRID_SERIAL:
+//      chr_count = board_usb_get_serial(_desc_str + 1, 32);
+//      break;
 
     default:
       // Note: the 0xEE index string is a Microsoft OS 1.0 Descriptors.
