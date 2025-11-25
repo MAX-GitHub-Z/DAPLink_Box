@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7,STM32F1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -443,6 +443,11 @@
               <FileName>DAP_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\APP\DAP\DAP_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>nr_micro_shell_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\nr_shell\nr_micro_shell_port.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -828,6 +833,21 @@
               <FileName>tusb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\TinyUSB\scr\tusb.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>nr_micro_shell</GroupName>
+          <Files>
+            <File>
+              <FileName>nr_micro_shell_cmds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\nr_micro_shell\src\nr_micro_shell_cmds.c</FilePath>
+            </File>
+            <File>
+              <FileName>nr_micro_shell_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\nr_micro_shell\src\nr_micro_shell_core.c</FilePath>
             </File>
           </Files>
         </Group>

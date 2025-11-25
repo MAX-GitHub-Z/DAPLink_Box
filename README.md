@@ -38,7 +38,14 @@
   <!-- 动态宽度分隔线 -->
 <!--  <img src="https://user-images.githubusercontent.com/.../bottom-bar.svg" width="100%"> -->
 </div>
+
 # 项目简介
 
-这是一个DAPLink BOX 项目 该项目在参考[DAPLINK](https://github.com/ARMmbed/DAPLink?tab=readme-ov-file)的源码基础上 基于[STM32F103C8T6_CMSIS-DAP_SW](https://github.com/RadioOperator/STM32F103C8T6_CMSIS-DAP_SWO)项目进行开发
-该项目的目标是 去除DAPLink源码中多余的文件 来实现精简版的DAPLink固件
+目标是实现一个简易的调试工具，支持DAPLINK调试，以及其他功能
+目前已实现功能
+1、DAPLINK调试 支持使用keil进行DAP调试
+
+
+# 关键字
+
+CMSIS-DAP TinyUSB STM32 
