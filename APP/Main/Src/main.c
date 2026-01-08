@@ -25,6 +25,9 @@
 #include "board_api.h"
 #include "DAP.h"
 #include "nr_micro_shell.h"
+#include "ff_gen_drv.h"
+#include "diskio.h"
+#include "sd_diskio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -47,7 +50,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+FATFS SDFatFs;  /* File system object for SD card logical drive */
+FIL MyFile;     /* File object */
+//char SDPath[4]={"1:"}; /* SD card logical drive path */
+extern Diskio_drvTypeDef SD_Driver;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,6 +75,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	FRESULT ret=FR_OK;
   /* USER CODE END 1 */
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -105,6 +112,13 @@ int main(void)
 	DAP_Setup();
   /* USER CODE END 2 */
 
+	/*SD卡挂载*/
+	if(BSP_SD_Init() == MSD_OK)
+	{
+		printf("SD卡驱动成功\r\n");
+	}
+	GET_SDInfo();
+	//FR_res=  f_mount(&fs, "1:", 1);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

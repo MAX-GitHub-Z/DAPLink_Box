@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7,STM32F1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell;..\..\fatfs;..\..\APP\SD_FATFS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,6 +388,11 @@
               <FileName>startup_stm32f103xb.s</FileName>
               <FileType>2</FileType>
               <FilePath>startup_stm32f103xb.s</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_eval_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\SD_FATFS\bsp_eval_sd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -848,6 +853,41 @@
               <FileName>nr_micro_shell_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\nr_micro_shell\src\nr_micro_shell_core.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FATFS</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff_gen_drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\ff_gen_drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\ffunicode.c</FilePath>
+            </File>
+            <File>
+              <FileName>sd_diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\fatfs\sd_diskio.c</FilePath>
             </File>
           </Files>
         </Group>

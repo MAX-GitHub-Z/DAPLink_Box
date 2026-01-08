@@ -44,8 +44,12 @@
 目标是实现一个简易的调试工具，支持DAPLINK调试，以及其他功能
 目前已实现功能
 1、DAPLINK调试 支持使用keil进行DAP调试
-
+2、支持STM32识别SD卡驱动
 
 # 关键字
 
 CMSIS-DAP TinyUSB STM32 
+
+# TODO
+
+1、支持SD卡的fatfs挂载，为离线烧录等其他功能做准备
