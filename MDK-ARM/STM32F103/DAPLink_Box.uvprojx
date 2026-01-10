@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>7</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -870,11 +870,6 @@
               <FilePath>..\..\fatfs\ff.c</FilePath>
             </File>
             <File>
-              <FileName>ff_gen_drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\fatfs\ff_gen_drv.c</FilePath>
-            </File>
-            <File>
               <FileName>ffsystem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\fatfs\ffsystem.c</FilePath>
@@ -883,11 +878,6 @@
               <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\fatfs\ffunicode.c</FilePath>
-            </File>
-            <File>
-              <FileName>sd_diskio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\fatfs\sd_diskio.c</FilePath>
             </File>
           </Files>
         </Group>

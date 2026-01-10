@@ -25,9 +25,7 @@
 #include "board_api.h"
 #include "DAP.h"
 #include "nr_micro_shell.h"
-#include "ff_gen_drv.h"
 #include "diskio.h"
-#include "sd_diskio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -53,7 +51,7 @@
 FATFS SDFatFs;  /* File system object for SD card logical drive */
 FIL MyFile;     /* File object */
 //char SDPath[4]={"1:"}; /* SD card logical drive path */
-extern Diskio_drvTypeDef SD_Driver;
+char baes_path[4]={"0:"};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,12 +110,20 @@ int main(void)
 	DAP_Setup();
   /* USER CODE END 2 */
 
-	/*SD卡挂载*/
-	if(BSP_SD_Init() == MSD_OK)
+	//BSP_SD_Init();
+	/*SD卡挂载*/	
+	ret= f_mount(&SDFatFs, "0:", 1);
+	if(ret ==FR_OK)
 	{
-		printf("SD卡驱动成功\r\n");
+		printf("挂载成功 \r\n");
+		GET_SDInfo(baes_path,&SDFatFs);
 	}
-	GET_SDInfo();
+	else
+	{
+		printf("挂载失败 \r\n");
+		Get_FatFsInfo(ret);
+	}
+	//GET_SDInfo();
 	//FR_res=  f_mount(&fs, "1:", 1);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */

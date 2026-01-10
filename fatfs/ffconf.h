@@ -14,6 +14,10 @@
 /  f_unlink(), f_mkdir(), f_chmod(), f_rename(), f_truncate(), f_getfree()
 /  and optional writing functions as well. */
 
+/* 此选项用于切换为只读配置模式。（0：读/写模式或 1：只读模式）
+/*  只读配置会移除写入相关的 API 函数，如 f_write()、f_sync()、
+ * f_unlink()、f_mkdir()、f_chmod()、f_rename()、f_truncate() 
+ * 和 f_getfree() 等，以及相关的可选写入函数。 */
 
 #define FF_FS_MINIMIZE	0
 /* This option defines minimization level to remove some basic API functions.
@@ -24,28 +28,36 @@
 /   2: f_opendir(), f_readdir() and f_closedir() are removed in addition to 1.
 /   3: f_lseek() function is removed in addition to 2. */
 
+/* 此选项用于设定最小化级别，以移除一些基本的 API 函数。/
+/   0：基本功能已完全启用。
+/   1：f_stat()、f_getfree()、f_unlink()、f_mkdir()、f_truncate() 和 f_rename() 函数已被移除。
+/   2：除了 1 之外，f_opendir()、f_readdir() 和 f_closedir() 函数也被移除。
+/   3：除了 2 之外，f_lseek() 函数也被移除。*/
 
 #define FF_USE_FIND		0
 /* This option switches filtered directory read functions, f_findfirst() and
 /  f_findnext(). (0:Disable, 1:Enable 2:Enable with matching altname[] too) */
 
+/* 此选项用于切换过滤后的目录读取函数，即 f_findfirst() 和 f_findnext() 函数。
+ * （0：禁用，1：启用，2：同时启用并匹配 altname[] 项） */
 
-#define FF_USE_MKFS		0
+#define FF_USE_MKFS		1
 /* This option switches f_mkfs(). (0:Disable or 1:Enable) */
-
+/* 此选项用于控制 f_mkfs() 函数的启用或禁用状态（0 表示禁用，1 表示启用） */
 
 #define FF_USE_FASTSEEK	0
 /* This option switches fast seek feature. (0:Disable or 1:Enable) */
-
+/* 此选项用于开启快速查找功能。（0：禁用；1：启用） */
 
 #define FF_USE_EXPAND	0
 /* This option switches f_expand(). (0:Disable or 1:Enable) */
-
+/* 此选项用于控制 f_expand() 函数的启用或禁用状态（0 表示禁用，1 表示启用） */
 
 #define FF_USE_CHMOD	0
 /* This option switches attribute control API functions, f_chmod() and f_utime().
 /  (0:Disable or 1:Enable) Also FF_FS_READONLY needs to be 0 to enable this option. */
-
+/* 此选项用于切换属性控制 API 函数，即 f_chmod() 和 f_utime()。
+/ （0：禁用；1：启用）此外，还需将 FF_FS_READONLY 设为 0 以启用此选项。*/
 
 #define FF_USE_LABEL	0
 /* This option switches volume label API functions, f_getlabel() and f_setlabel().
@@ -56,7 +68,7 @@
 /* This option switches f_forward(). (0:Disable or 1:Enable) */
 
 
-#define FF_USE_STRFUNC	2
+#define FF_USE_STRFUNC	0
 #define FF_PRINT_LLI	0
 #define FF_PRINT_FLOAT	0
 #define FF_STRF_ENCODE	0
@@ -84,7 +96,7 @@
 / Locale and Namespace Configurations
 /---------------------------------------------------------------------------*/
 
-#define FF_CODE_PAGE	936
+#define FF_CODE_PAGE	932
 /* This option specifies the OEM code page to be used on the target system.
 /  Incorrect code page setting can cause a file open failure.
 /
@@ -113,7 +125,7 @@
 */
 
 
-#define FF_USE_LFN		0
+#define FF_USE_LFN		1
 #define FF_MAX_LFN		255
 /* The FF_USE_LFN switches the support for LFN (long file name).
 /
@@ -131,9 +143,16 @@
 /  When use stack for the working buffer, take care on stack overflow. When use heap
 /  memory for the working buffer, memory management functions, ff_memalloc() and
 /  ff_memfree() exemplified in ffsystem.c, need to be added to the project. */
+/* “FF_USE_LFN” 选项用于启用对长文件名（LFN）的支持。/
+/   0：禁用 LFN。FF_MAX_LFN 无效。
+/   1：启用 LFN，同时在 BSS 上使用静态工作缓冲区。始终不具有线程安全性。
+/   2：启用 LFN，使用动态工作缓冲区存储在栈中。
+/   3：启用 LFN，使用动态工作缓冲区存储在堆中。/
+要启用 LFN 功能，需要将 ffunicode.c 添加到项目中。LFN 功能需要特定的内部工作缓冲区占用（FF_MAX_LFN + 1）* 2 字节，并且当启用 exFAT 时还需要额外的（FF_MAX_LFN + 44）/ 15 * 32 字节。
+FF_MAX_LFN 定义了工作缓冲区在 UTF-16 编码单元中的大小，其范围可在 12 到 255 之间。建议将其设置为 255 以完全支持 LFN 规范。
+当使用栈作为工作缓冲区时，要注意防止栈溢出。当使用堆内存作为工作缓冲区时，需要在项目中添加 ffsystem.c 中示例的内存管理函数 ff_memalloc() 和 ff_memfree() 。*/
 
-
-#define FF_LFN_UNICODE	0
+#define FF_LFN_UNICODE	2
 /* This option switches the character encoding on the API when LFN is enabled.
 /
 /   0: ANSI/OEM in current CP (TCHAR = char)
@@ -143,7 +162,13 @@
 /
 /  Also behavior of string I/O functions will be affected by this option.
 /  When LFN is not enabled, this option has no effect. */
-
+/* 此选项在启用 LFN 时会切换 API 的字符编码。/
+/   0：当前代码页采用 ANSI 或 OEM 编码（TCHAR 为字符型）
+/   1：采用 UTF-16 编码的 Unicode（TCHAR 为宽字符型）
+/   2：采用 UTF-8 编码的 Unicode（TCHAR 为字符型）
+/   3：采用 UTF-32 编码的 Unicode（TCHAR 为双字型）/
+/  此选项还会对字符串输入/输出函数的行为产生影响。
+/  若未启用 LFN 功能，则此选项将不起作用。*/
 
 #define FF_LFN_BUF		255
 #define FF_SFN_BUF		12
@@ -151,16 +176,20 @@
 /  which is used to read out directory items. These values should be suffcient for
 /  the file names to read. The maximum possible length of the read file name depends
 /  on character encoding. When LFN is not enabled, these options have no effect. */
+/* 本组选项定义了在“FILINFO”结构中文件名成员的大小，该结构用于读取目录项。这些值应足以读取文件名。
+文件名的最大可能长度取决于字符编码。当 LFN 未启用时，这些选项将不起作用。  */
 
-
-#define FF_FS_RPATH		0
+#define FF_FS_RPATH		2
 /* This option configures support for relative path feature.
 /
 /   0: Disable relative path and remove related API functions.
 /   1: Enable relative path and dot names. f_chdir() and f_chdrive() are available.
 /   2: f_getcwd() is available in addition to 1.
 */
-
+/* 此选项用于配置相对路径功能的支持。/
+/   0：禁用相对路径并移除相关 API 函数。
+/   1：启用相对路径和点名。f_chdir() 和 f_chdrive() 均可用。
+/   2：除了 1 选项外，还支持 f_getcwd() 。*/
 
 #define FF_PATH_DEPTH	10
 /*  This option defines maximum depth of directory in the exFAT volume. It is NOT
@@ -171,7 +200,11 @@
 /   The size of filesystem object (FATFS) increases FF_PATH_DEPTH * 24 bytes.
 /   When FF_FS_EXFAT == 0 or FF_FS_RPATH == 0, this option has no effect.
 */
-
+/*  此选项定义了 exFAT 文件卷中目录的最大深度。它与 FAT/FAT32 文件卷无关。
+/   例如，FF_PATH_DEPTH = 3 将能够访问路径“/dir1/dir2/dir3/file”，
+/   但 dir3 中的子目录将无法被访问并设置当前目录。
+/   文件系统对象（FATFS）的大小会增加 FF_PATH_DEPTH * 24 字节。
+/   当 FF_FS_EXFAT 为 0 或 FF_FS_RPATH 为 0 时，此选项将不起作用。 */
 
 
 /*---------------------------------------------------------------------------/
@@ -203,7 +236,11 @@
 /  When this feature is enabled (1), each logical drive number can be bound to
 /  arbitrary physical drive and partition listed in the VolToPart[]. Also f_fdisk()
 /  will be available. */
-
+/* 此选项可启用对物理驱动器上多个卷的支持。
+/ 默认情况下（值为 0），每个逻辑驱动器编号均与同一物理驱动器编号绑定，
+/ 且仅会挂载该物理驱动器上发现的 FAT 卷。
+/ 启用此功能后（值为 1），每个逻辑驱动器编号均可与列表中的任意物理驱动器和分区绑定。
+/ 此外，f_fdisk() 函数也将可用。  */
 
 #define FF_MIN_SS		512
 #define FF_MAX_SS		512
@@ -225,11 +262,12 @@
 /  f_fdisk(). 2^32 sectors maximum. This option has no effect when FF_LBA64 == 0. */
 
 
-#define FF_USE_TRIM		0
+#define FF_USE_TRIM		1
 /* This option switches support for ATA-TRIM. (0:Disable or 1:Enable)
 /  To enable this feature, also CTRL_TRIM command should be implemented to
 /  the disk_ioctl(). */
-
+/* 此选项用于开启 ATA-TRIM 支持功能。（0：禁用；1：启用）
+/  要启用此功能，还需在 disk_ioctl() 函数中实现 CTRL_TRIM 命令。*/
 
 
 /*---------------------------------------------------------------------------/
@@ -243,13 +281,15 @@
 /  buffer in the filesystem object (FATFS) is used for the file data transfer. */
 
 
-#define FF_FS_EXFAT		0
+#define FF_FS_EXFAT		1
 /* This option switches support for exFAT filesystem. (0:Disable or 1:Enable)
 /  To enable exFAT, also LFN needs to be enabled. (FF_USE_LFN >= 1)
 /  Note that enabling exFAT discards ANSI C (C89) compatibility. */
+/* 此选项用于切换对 exFAT 文件系统的支持（0：禁用，1：启用）
+/  要启用 exFAT，还需要启用 LFN 功能（FF_USE_LFN >= 1）
+/  请注意，启用 exFAT 将会放弃与 ANSI C（C89）的兼容性。*/
 
-
-#define FF_FS_NORTC		0
+#define FF_FS_NORTC		1
 #define FF_NORTC_MON	1
 #define FF_NORTC_MDAY	1
 #define FF_NORTC_YEAR	2025
@@ -266,9 +306,10 @@
 #define FF_FS_CRTIME	0
 /* This option enables(1)/disables(0) the timestamp of the file created. When
 /  set 1, the file created time is available in FILINFO structure. */
+/* 此选项用于启用（1）或禁用（0）文件创建时的时间戳。当
+/ 第一组：创建文件的时间信息存于 FILINFO 结构体中。*/
 
-
-#define FF_FS_NOFSINFO	0
+#define FF_FS_NOFSINFO	1
 /* If you need to know the correct free space on the FAT32 volume, set bit 0 of
 /  this option, and f_getfree() on the first time after volume mount will force
 /  a full FAT scan. Bit 1 controls the use of last allocated cluster number.
@@ -278,7 +319,11 @@
 /  bit1=0: Use last allocated cluster number in the FSINFO if available.
 /  bit1=1: Do not trust last allocated cluster number in the FSINFO.
 */
-
+/* 如果您需要了解 FAT32 文件卷上的可用空间情况，请将此选项的第 0 位设为 1，然后在卷挂载后的首次调用 f_getfree() 时，它将强制进行一次完整的 FAT 扫描。第 1 位控制是否使用上一个分配的簇编号。/
+/  位 0 = 0：若 FSINFO 中存在可用的空闲簇数量，则使用该数量。
+/  位 0 = 1：不信任 FSINFO 中的空闲簇数量。
+/  位 1 = 0：若 FSINFO 中存在可用的最后分配簇编号，则使用该编号。
+/  位 1 = 1：不信任 FSINFO 中的最后分配簇编号。*/
 
 #define FF_FS_LOCK		0
 /* The option FF_FS_LOCK switches file lock function to control duplicated file open
@@ -290,7 +335,9 @@
 /  >0: Enable file lock function. The value defines how many files/sub-directories
 /      can be opened simultaneously under file lock control. Note that the file
 /      lock control is independent of re-entrancy. */
-
+/* 选项 FF_FS_LOCK 用于开启文件锁定功能，以控制文件的重复打开以及非法的对象打开操作。当 FF_FS_READONLY 为 1 时，此选项必须设为 0 。/
+/  0：禁用文件锁定功能。为防止数据损坏，应用程序应避免非法打开、删除和重命名已打开的对象。
+/  >0：启用文件锁定功能。该值定义了在文件锁定控制下可同时打开的文件/子目录数量。请注意，文件锁定控制与重入性无关。*/
 
 #define FF_FS_REENTRANT	0
 #define FF_FS_TIMEOUT	1000
