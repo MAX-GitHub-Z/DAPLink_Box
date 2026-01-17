@@ -93,9 +93,9 @@ enum {
 	ITF_NUM_HID = 0,
   ITF_NUM_CDC ,
   ITF_NUM_CDC_DATA,
-	ITF_NUM_CDC2,
-	ITF_NUM_CDC2_DATA,
-  //ITF_NUM_MSC,
+#if CFG_TUD_MSC	
+  ITF_NUM_MSC,
+#endif
   ITF_NUM_TOTAL
 };
 
@@ -134,19 +134,19 @@ enum {
   #define EPNUM_CDC_OUT     0x02
   #define EPNUM_CDC_IN      0x83
 	
-  #define EPNUM_CDC2_NOTIF   0x84
-  #define EPNUM_CDC2_OUT     0x03
-  #define EPNUM_CDC2_IN      0x85
+//  #define EPNUM_CDC2_NOTIF   0x84
+//  #define EPNUM_CDC2_OUT     0x03
+//  #define EPNUM_CDC2_IN      0x85
 	
 	#define EPNUM_HID_IN   	0x81
 	#define EPNUM_HID_OUT   0x01
 
-//  #define EPNUM_MSC_OUT     0x03
-//  #define EPNUM_MSC_IN      0x83
+  #define EPNUM_MSC_OUT     0x03
+  #define EPNUM_MSC_IN      0x84
 
 #endif
 
-#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*CFG_TUD_CDC + TUD_HID_INOUT_DESC_LEN)//+ TUD_MSC_DESC_LEN)
+#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN*CFG_TUD_CDC + TUD_HID_INOUT_DESC_LEN + TUD_MSC_DESC_LEN*CFG_TUD_MSC)//+ TUD_MSC_DESC_LEN)
 
 
 uint8_t const desc_hid_report[] =
@@ -171,13 +171,15 @@ static uint8_t const desc_fs_configuration[] = {
 //    //  
     TUD_CDC_DESCRIPTOR(ITF_NUM_CDC, 4, EPNUM_CDC_NOTIF, 8, EPNUM_CDC_OUT, EPNUM_CDC_IN, CFG_TUD_CDC_EP_BUFSIZE),
 
-		TUD_CDC_DESCRIPTOR(ITF_NUM_CDC2, 5, EPNUM_CDC2_NOTIF, 8, EPNUM_CDC2_OUT, EPNUM_CDC2_IN, CFG_TUD_CDC_EP_BUFSIZE),
+		//TUD_CDC_DESCRIPTOR(ITF_NUM_CDC2, 5, EPNUM_CDC2_NOTIF, 8, EPNUM_CDC2_OUT, EPNUM_CDC2_IN, CFG_TUD_CDC_EP_BUFSIZE),
 	
 			  // Interface number, string index, protocol, report descriptor len, EP In address, size & polling interval
 		TUD_HID_INOUT_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report), EPNUM_HID_OUT,EPNUM_HID_IN, CFG_TUD_HID_EP_BUFSIZE, 0),
 
     // Interface number, string index, EP Out & EP In address, EP size
-//    TUD_MSC_DESCRIPTOR(ITF_NUM_MSC, 5, EPNUM_MSC_OUT, EPNUM_MSC_IN, 64),
+	#if CFG_TUD_MSC	
+    TUD_MSC_DESCRIPTOR(ITF_NUM_MSC, 5, EPNUM_MSC_OUT, EPNUM_MSC_IN, CFG_TUD_MSC_EP_BUFSIZE),
+	#endif
 };
 
 #if TUD_OPT_HIGH_SPEED
@@ -274,7 +276,7 @@ static char const *string_desc_arr[] = {
     CONFIG_TUSB_PRODUCT,              // 2: Product
     uid_str,                          // 3: Serials will use unique ID if possible
     CONFIG_TUSB_SERIAL_NUM,                 // 4: CDC Interface
-    //"TinyUSB MSC",                 // 5: MSC Interface
+    "TinyUSB MSC",                 // 5: MSC Interface
 };
 
 static uint16_t _desc_str[32 + 1];

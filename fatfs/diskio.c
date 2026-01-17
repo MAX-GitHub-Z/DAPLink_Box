@@ -39,6 +39,10 @@ DSTATUS disk_status (
 }
 
 
+uint8_t disk_get_initstatus()
+{
+	return 1;
+}
 
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */

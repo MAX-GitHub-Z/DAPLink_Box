@@ -64,7 +64,6 @@ void cdc_task(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-
 /**
   * @brief  The application entry point.
   * @retval int
@@ -98,6 +97,18 @@ int main(void)
 	MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
 	
+	ret= f_mount(&SDFatFs, "0:", 1);
+	if(ret ==FR_OK)
+	{
+		printf("挂载成功 \r\n");
+		GET_SDInfo(baes_path,&SDFatFs);
+		FatFS_Test();
+	}
+	else
+	{
+		printf("挂载失败 \r\n");
+		Get_FatFsInfo(ret);
+	}
   // init device stack on configured roothub port
   tusb_rhport_init_t dev_init = {
     .role = TUSB_ROLE_DEVICE,
@@ -112,17 +123,7 @@ int main(void)
 
 	//BSP_SD_Init();
 	/*SD卡挂载*/	
-	ret= f_mount(&SDFatFs, "0:", 1);
-	if(ret ==FR_OK)
-	{
-		printf("挂载成功 \r\n");
-		GET_SDInfo(baes_path,&SDFatFs);
-	}
-	else
-	{
-		printf("挂载失败 \r\n");
-		Get_FatFsInfo(ret);
-	}
+
 	//GET_SDInfo();
 	//FR_res=  f_mount(&fs, "1:", 1);
   /* Infinite loop */

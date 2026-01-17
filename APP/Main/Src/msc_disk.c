@@ -23,8 +23,9 @@
  *
  */
 
-#include "bsp/board_api.h"
+#include "board_api.h"
 #include "tusb.h"
+#include "diskio.h"	
 
 #if CFG_TUD_MSC
 
@@ -49,6 +50,14 @@ static
 #ifdef CFG_EXAMPLE_MSC_READONLY
 const
 #endif
+//------------- 第0块：引导扇区 -------------//
+// 每扇区字节数 = 磁盘扇区大小；16 位 FAT 扇区数量 = 磁盘扇区总数；
+// 每簇扇区数 = 1；保留扇区数 = 1；
+// FAT 数量 = 1；16 位 FAT 根目录项数量 = 16；
+// 每个 FAT 扇区数 = 1；每个磁道扇区数 = 1；磁头数量 = 1；隐藏扇区数 = 0；
+// 驱动器编号 = 0x80；介质类型 = 0xf8；扩展引导签名 = 0x29；
+// 文件系统类型 = "FAT12   "；卷序列号 = 0x1234；卷标签 = "TinyUSB MSC"；
+// 位于偏移量 510 - 511 的 FAT 魔法代码
 uint8_t msc_disk[DISK_BLOCK_NUM][DISK_BLOCK_SIZE] = {
   //------------- Block0: Boot Sector -------------//
   // byte_per_sector    = DISK_BLOCK_SIZE; fat12_sector_num_16  = DISK_BLOCK_NUM;
@@ -118,6 +127,7 @@ uint8_t msc_disk[DISK_BLOCK_NUM][DISK_BLOCK_SIZE] = {
   {README_CONTENTS}
 };
 
+static int memset_32bit(void* s, int c, uint32_t _size);
 // Invoked when received SCSI_CMD_INQUIRY, v2 with full inquiry response
 // Some inquiry_resp's fields are already filled with default values, application can update them
 // Return length of inquiry response, typically sizeof(scsi_inquiry_resp_t) (36 bytes), can be longer if included vendor data.
@@ -128,9 +138,9 @@ uint32_t tud_msc_inquiry2_cb(uint8_t lun, scsi_inquiry_resp_t *inquiry_resp, uin
   const char pid[] = "Mass Storage";
   const char rev[] = "1.0";
 
-  strncpy((char*) inquiry_resp->vendor_id, vid, 8);
-  strncpy((char*) inquiry_resp->product_id, pid, 16);
-  strncpy((char*) inquiry_resp->product_rev, rev, 4);
+  (void) strncpy((char*) inquiry_resp->vendor_id, vid, 8);
+  (void) strncpy((char*) inquiry_resp->product_id, pid, 16);
+  (void) strncpy((char*) inquiry_resp->product_rev, rev, 4);
 
   return sizeof(scsi_inquiry_resp_t); // 36 bytes
 }
@@ -143,8 +153,7 @@ bool tud_msc_test_unit_ready_cb(uint8_t lun) {
   // RAM disk is ready until ejected
   if (ejected) {
     // Additional Sense 3A-00 is NOT_FOUND
-    tud_msc_set_sense(lun, SCSI_SENSE_NOT_READY, 0x3a, 0x00);
-    return false;
+    return tud_msc_set_sense(lun, SCSI_SENSE_NOT_READY, 0x3a, 0x00);
   }
 
   return true;
@@ -153,10 +162,18 @@ bool tud_msc_test_unit_ready_cb(uint8_t lun) {
 // Invoked when received SCSI_CMD_READ_CAPACITY_10 and SCSI_CMD_READ_FORMAT_CAPACITY to determine the disk size
 // Application update block count and block size
 void tud_msc_capacity_cb(uint8_t lun, uint32_t *block_count, uint16_t *block_size) {
-  (void) lun;
+	(void) lun;
 
-  *block_count = DISK_BLOCK_NUM;
-  *block_size = DISK_BLOCK_SIZE;
+	int ret;
+	uint32_t LogBlockNbr=0,LogBlocksize=0;
+	disk_ioctl(0,GET_SECTOR_COUNT,&LogBlockNbr);
+	disk_ioctl(0,GET_SECTOR_SIZE,&LogBlocksize);
+	printf("capacity_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
+		*block_count = LogBlockNbr;
+		*block_size  = LogBlocksize;	
+	//printf("tud_msc_capacity_cb n=%d s=%d \r\n",LogBlockNbr,LogBlocksize);
+		return ;
+
 }
 
 // Invoked when received Start Stop Unit command
@@ -181,22 +198,52 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
 // Callback invoked when received READ10 command.
 // Copy disk's data to buffer (up to bufsize) and return number of copied bytes.
 int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void *buffer, uint32_t bufsize) {
-  (void) lun;
+	(void) lun;
 
-  // out of ramdisk
-  if (lba >= DISK_BLOCK_NUM) {
-    return -1;
-  }
+	uint8_t ret;
+	uint32_t LogBlockNbr=0,LogBlocksize=0;
+	disk_ioctl(0,GET_SECTOR_COUNT,&LogBlockNbr);
+	disk_ioctl(0,GET_SECTOR_SIZE,&LogBlocksize);
+//	if(lun == SDDISK)  
+	{
 
-  // Check for overflow of offset + bufsize
-  if (lba * DISK_BLOCK_SIZE + offset + bufsize > DISK_BLOCK_NUM * DISK_BLOCK_SIZE) {
-    return -1;
-  }
+		if(disk_get_initstatus() == 1) 
+			{
+			
+			// 检测 sd 卡是否插入  。。？
+			if(LogBlockNbr == 0 || LogBlocksize == 0) 
+			{
+				return -1;
+			}
+			// out of ramdisk
+			if (lba >=  LogBlockNbr) {
+				return -1;
+			}
 
-  uint8_t const *addr = msc_disk[lba] + offset;
-  memcpy(buffer, addr, bufsize);
-
-  return (int32_t) bufsize;
+			// Check for overflow of offset + bufsize
+			if (offset + bufsize >  LogBlocksize) {
+				return -1;
+			}
+			//extern DRESULT sd_disk_read(BYTE pdrv, BYTE* buff, LBA_t sector, UINT count);
+			//			volatile uint32_t addr = (lba * 512)+offset;   这个是错误的， 因为 sd 底层会 *512
+			volatile uint32_t addr = lba + offset;    
+			ret = disk_read( 0, (uint8_t *)buffer, 
+								addr,                                			// 给出 块的 索引即可
+								bufsize/LogBlocksize			// 需要读取 块的大小, 一块为单位
+							  );			
+			
+			if(ret == RES_OK) 
+			{
+				printf("read10_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
+				return bufsize;
+			}
+			else
+			{
+				printf("read10_cberr n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
+			}
+		}
+	}
+	return -1;
 }
 
 bool tud_msc_is_writable_cb(uint8_t lun) {
@@ -213,41 +260,97 @@ bool tud_msc_is_writable_cb(uint8_t lun) {
 // Process data in buffer to disk's storage and return number of written bytes
 int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t *buffer, uint32_t bufsize) {
   (void) lun;
+	
+	uint8_t ret;
+	uint32_t LogBlockNbr=0,LogBlocksize=0;
+	disk_ioctl(0,GET_SECTOR_COUNT,&LogBlockNbr);
+	disk_ioctl(0,GET_SECTOR_SIZE,&LogBlocksize);
+//	if(lun == SDDISK)  
+	{
 
-  // out of ramdisk
-  if (lba >= DISK_BLOCK_NUM) {
-    return -1;
-  }
-
-  #ifndef CFG_EXAMPLE_MSC_READONLY
-  uint8_t *addr = msc_disk[lba] + offset;
-  memcpy(addr, buffer, bufsize);
-  #else
-  (void) lba;
-  (void) offset;
-  (void) buffer;
-  #endif
-
-  return (int32_t) bufsize;
+		if(disk_get_initstatus() == 1)   
+			{
+			// 检测 sd 卡是否插入  。。？
+			if(LogBlockNbr == 0 || LogBlocksize == 0) 
+			{
+				return -1;
+			}
+			disk_ioctl(0,GET_SECTOR_COUNT,&LogBlockNbr);
+			disk_ioctl(0,GET_SECTOR_SIZE,&LogBlocksize);
+			if (lba >=  LogBlockNbr) {
+				return -1;
+			}
+			if(LogBlocksize == 0)
+			{
+				return -1;
+			}
+			
+			//extern DRESULT sd_disk_write(BYTE pdrv, const BYTE* buff, LBA_t sector, UINT count);
+			//(BYTE pdrv, BYTE* buff, LBA_t sector, UINT count);
+			volatile uint32_t addr = lba + offset;
+			ret = disk_write(0, (const BYTE*) buffer,  addr,  bufsize/LogBlocksize);
+			if(ret == RES_OK) 
+			{
+				printf("write10_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
+				return bufsize;
+			}
+			else
+			{
+				printf("write10_cberr n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
+			}
+		}
+	}
+	return -1;	
 }
 
 // Callback invoked when received an SCSI command not in built-in list below
 // - READ_CAPACITY10, READ_FORMAT_CAPACITY, INQUIRY, MODE_SENSE6, REQUEST_SENSE
 // - READ10 and WRITE10 has their own callbacks
 int32_t tud_msc_scsi_cb(uint8_t lun, uint8_t const scsi_cmd[16], void *buffer, uint16_t bufsize) {
-  (void) buffer;
-  (void) bufsize;
+  void const* response = NULL;
+  int32_t resplen = 0;
 
-  switch (scsi_cmd[0]) {
+  // most scsi handled is input
+  bool in_xfer = true;
+
+  switch (scsi_cmd[0])
+  {
     default:
       // Set Sense = Invalid Command Operation
       tud_msc_set_sense(lun, SCSI_SENSE_ILLEGAL_REQUEST, 0x20, 0x00);
 
       // negative means error -> tinyusb could stall and/or response with failed status
-      return -1;
+      resplen = -1;
+    break;
   }
 
-  return -1;
+  // return resplen must not larger than bufsize
+  if ( resplen > bufsize ) resplen = bufsize;
+
+  if ( response && (resplen > 0) )
+  {
+    if(in_xfer)
+    {
+      memcpy(buffer, response, (size_t) resplen);
+    }else
+    {
+      // SCSI output
+    }
+  }
+
+  return (int32_t) resplen;
 }
 
+static int memset_32bit(void* s, int c, uint32_t _size)
+{
+	if((_size % 4) != 0)  return -1;
+	
+    volatile unsigned int * p = (volatile unsigned int *) s;
+	_size /= 4;
+    while (_size > 0) {
+		 *p++ = (unsigned char) c;
+		 --_size;
+    }
+	return 0;
+}
 #endif

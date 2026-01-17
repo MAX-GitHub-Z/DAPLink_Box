@@ -114,11 +114,11 @@ uint8_t BSP_SD_Init(void)
   uSdHandle.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
   uSdHandle.Init.ClockDiv            = SDIO_TRANSFER_CLK_DIV;
   
-  /* Check if the SD card is plugged in the slot */
-  if(BSP_SD_IsDetected() != SD_PRESENT)
-  {
-    return MSD_ERROR;
-  }
+//  /* Check if the SD card is plugged in the slot */
+//  if(BSP_SD_IsDetected() != SD_PRESENT)
+//  {
+//    return MSD_ERROR;
+//  }
   
   /* Msp SD initialization */
   BSP_SD_MspInit(NULL);
@@ -380,16 +380,16 @@ __weak void BSP_SD_MspInit(void *Params)
   gpioinitstruct.Pin = GPIO_PIN_2;
   HAL_GPIO_Init(GPIOD, &gpioinitstruct);
 
-  /* SD Card detect pin configuration */
-  gpioinitstruct.Mode      = GPIO_MODE_INPUT;
-  gpioinitstruct.Pull      = GPIO_PULLUP;
-  gpioinitstruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-  gpioinitstruct.Pin       = SD_DETECT_PIN;
-  HAL_GPIO_Init(SD_DETECT_GPIO_PORT, &gpioinitstruct);
-    
-  /* NVIC configuration for SDIO interrupts */
-  HAL_NVIC_SetPriority(SDIO_IRQn, 0xC, 0);
-  HAL_NVIC_EnableIRQ(SDIO_IRQn);
+//  /* SD Card detect pin configuration */
+//  gpioinitstruct.Mode      = GPIO_MODE_INPUT;
+//  gpioinitstruct.Pull      = GPIO_PULLUP;
+//  gpioinitstruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+//  gpioinitstruct.Pin       = SD_DETECT_PIN;
+//  HAL_GPIO_Init(SD_DETECT_GPIO_PORT, &gpioinitstruct);
+//    
+//  /* NVIC configuration for SDIO interrupts */
+//  HAL_NVIC_SetPriority(SDIO_IRQn, 0xC, 0);
+//  HAL_NVIC_EnableIRQ(SDIO_IRQn);
   
   /* DMA initialization should be done here but , as there is only one channel for RX and TX it is configured and done directly when required*/
 }
