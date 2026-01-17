@@ -58,7 +58,7 @@
 #define CFG_TUSB_OS           OPT_OS_NONE
 #endif
 
-// 启用调试输出（仅开发阶段）
+// 拼觾碌梅蕯胜鲁枚拢篓陆枚驴陋路垄陆锥危漏
 #ifndef CFG_TUSB_DEBUG
 #define CFG_TUSB_DEBUG        1
 #endif
@@ -96,7 +96,7 @@
 
 //------------- CLASS -------------//
 #define CFG_TUD_CDC              1
-#define CFG_TUD_MSC              0
+#define CFG_TUD_MSC              1
 #define CFG_TUD_HID              1
 #define CFG_TUD_MIDI             0
 #define CFG_TUD_VENDOR           0
@@ -111,7 +111,7 @@
 #define CFG_TUD_CDC_EP_BUFSIZE   16
 
 // MSC Buffer size of Device Mass storage
-#define CFG_TUD_MSC_EP_BUFSIZE   64
+#define CFG_TUD_MSC_EP_BUFSIZE   512
 
 // HID buffer size Should be sufficient to hold ID (if any) + Data
 #define CFG_TUD_HID_EP_BUFSIZE    64
@@ -120,7 +120,7 @@
 
 #define CFG_TUD_ENABLED 				1
 
-//#define CFG_TUD_MAX_SPEED   		OPT_MODE_FULL_SPEED   // 定义设备运行速度，例如全速
+//#define CFG_TUD_MAX_SPEED   		OPT_MODE_FULL_SPEED   // 露篓谣扫卤赂詪袗藱露龋卢脌媒颧全藱
 
 
 

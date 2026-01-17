@@ -93,7 +93,7 @@ enum {
 	ITF_NUM_HID = 0,
   ITF_NUM_CDC ,
   ITF_NUM_CDC_DATA,
-#if CFG_TUD_MSC	
+#if CFG_TUD_MSC
   ITF_NUM_MSC,
 #endif
   ITF_NUM_TOTAL
@@ -175,11 +175,10 @@ static uint8_t const desc_fs_configuration[] = {
 	
 			  // Interface number, string index, protocol, report descriptor len, EP In address, size & polling interval
 		TUD_HID_INOUT_DESCRIPTOR(ITF_NUM_HID, 0, HID_ITF_PROTOCOL_NONE, sizeof(desc_hid_report), EPNUM_HID_OUT,EPNUM_HID_IN, CFG_TUD_HID_EP_BUFSIZE, 0),
-
+#if CFG_TUD_MSC
     // Interface number, string index, EP Out & EP In address, EP size
-	#if CFG_TUD_MSC	
-    TUD_MSC_DESCRIPTOR(ITF_NUM_MSC, 5, EPNUM_MSC_OUT, EPNUM_MSC_IN, CFG_TUD_MSC_EP_BUFSIZE),
-	#endif
+    TUD_MSC_DESCRIPTOR(ITF_NUM_MSC, 5, EPNUM_MSC_OUT, EPNUM_MSC_IN, 64),
+		#endif
 };
 
 #if TUD_OPT_HIGH_SPEED
@@ -276,7 +275,7 @@ static char const *string_desc_arr[] = {
     CONFIG_TUSB_PRODUCT,              // 2: Product
     uid_str,                          // 3: Serials will use unique ID if possible
     CONFIG_TUSB_SERIAL_NUM,                 // 4: CDC Interface
-    "TinyUSB MSC",                 // 5: MSC Interface
+    //"TinyUSB MSC",                 // 5: MSC Interface
 };
 
 static uint16_t _desc_str[32 + 1];

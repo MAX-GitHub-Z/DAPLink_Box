@@ -101,13 +101,13 @@ int main(void)
 	if(ret ==FR_OK)
 	{
 		printf("挂载成功 \r\n");
-		GET_SDInfo(baes_path,&SDFatFs);
-		FatFS_Test();
+//		GET_SDInfo(baes_path,&SDFatFs);
+//		FatFS_Test();
 	}
 	else
 	{
 		printf("挂载失败 \r\n");
-		Get_FatFsInfo(ret);
+//		Get_FatFsInfo(ret);
 	}
   // init device stack on configured roothub port
   tusb_rhport_init_t dev_init = {

@@ -168,7 +168,6 @@ void tud_msc_capacity_cb(uint8_t lun, uint32_t *block_count, uint16_t *block_siz
 	uint32_t LogBlockNbr=0,LogBlocksize=0;
 	disk_ioctl(0,GET_SECTOR_COUNT,&LogBlockNbr);
 	disk_ioctl(0,GET_SECTOR_SIZE,&LogBlocksize);
-	printf("capacity_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
 		*block_count = LogBlockNbr;
 		*block_size  = LogBlocksize;	
 	//printf("tud_msc_capacity_cb n=%d s=%d \r\n",LogBlockNbr,LogBlocksize);
@@ -234,12 +233,10 @@ int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void *buff
 			
 			if(ret == RES_OK) 
 			{
-				printf("read10_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
 				return bufsize;
 			}
 			else
 			{
-				printf("read10_cberr n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
 			}
 		}
 	}
@@ -291,12 +288,10 @@ int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t *
 			ret = disk_write(0, (const BYTE*) buffer,  addr,  bufsize/LogBlocksize);
 			if(ret == RES_OK) 
 			{
-				printf("write10_cb n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
 				return bufsize;
 			}
 			else
 			{
-				printf("write10_cberr n=%d z=%d\r\n",LogBlockNbr,LogBlocksize);
 			}
 		}
 	}
