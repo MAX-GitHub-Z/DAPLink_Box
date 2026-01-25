@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>7</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -329,8 +329,8 @@
             <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
-            <v6LangP>3</v6LangP>
+            <v6Lang>4</v6Lang>
+            <v6LangP>4</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xE,BLUEPILL,SWO_PB7,STM32F1</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE,STM32F1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell;..\..\fatfs;..\..\APP\SD_FATFS</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell;..\..\fatfs;..\..\APP\SD_FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\portable\GCC\ARM_CM3;..\..\TinyUSB\scr\osal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <ClangAsOpt>2</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -458,6 +458,11 @@
               <FileName>msc_disk.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\msc_disk.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_timebase_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\stm32f1xx_hal_timebase_tim.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -888,6 +893,51 @@
               <FileName>fatfs_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\fatfs\fatfs_test.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FreeRTOS</GroupName>
+          <Files>
+            <File>
+              <FileName>croutine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\croutine.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\list.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>stream_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\stream_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\timers.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\portable\GCC\ARM_CM3\port.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -40,6 +40,7 @@ void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void USB_Rest(void);
+BaseType_t Led_Task_Init(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

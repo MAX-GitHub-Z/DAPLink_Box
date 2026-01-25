@@ -309,7 +309,7 @@ FF_MAX_LFN 定义了工作缓冲区在 UTF-16 编码单元中的大小，其范�
 /* 此选项用于启用（1）或禁用（0）文件创建时的时间戳。当
 / 第一组：创建文件的时间信息存于 FILINFO 结构体中。*/
 
-#define FF_FS_NOFSINFO	1
+#define FF_FS_NOFSINFO	0
 /* If you need to know the correct free space on the FAT32 volume, set bit 0 of
 /  this option, and f_getfree() on the first time after volume mount will force
 /  a full FAT scan. Bit 1 controls the use of last allocated cluster number.

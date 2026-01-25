@@ -55,7 +55,8 @@
 #endif
 
 #ifndef CFG_TUSB_OS
-#define CFG_TUSB_OS           OPT_OS_NONE
+#define CFG_TUSB_OS           OPT_OS_FREERTOS
+//#define CFG_TUSB_OS            OPT_OS_NONE
 #endif
 
 // ƴӃµ÷ʔʤ³ö£¨½ö¿ª·¢½׶Σ©
@@ -136,6 +137,17 @@
 #define CFG_TUD_HID_TX_BUFSIZE   64
 
 /***************************HID Config**********************/
+
+#ifdef ESP_PLATFORM
+  #define USBD_STACK_SIZE     4096
+#else
+  // Increase stack size when debug log is enabled
+  #define USBD_STACK_SIZE    (4*configMINIMAL_STACK_SIZE/2) * (CFG_TUSB_DEBUG ? 2 : 1)
+#endif
+
+#define CDC_STACK_SIZE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 2 : 1))
+#define HID_STACK_SZIE      (configMINIMAL_STACK_SIZE * (CFG_TUSB_DEBUG ? 2 : 1))
+
 #ifdef __cplusplus
  }
 #endif

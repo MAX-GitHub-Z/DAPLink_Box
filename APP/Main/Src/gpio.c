@@ -22,13 +22,34 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+static TaskHandle_t LED1_Task_Handle = NULL;
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
+
+/**********************************************************************
+  * @ 函数名  ： LED_Task
+  * @ 功能说明： LED_Task任务主体
+  * @ 参数    ：   
+  * @ 返回值  ： 无
+  ********************************************************************/
+static void LED1_Task(void* parameter)
+{	
+    while (1)
+    {
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
+        vTaskDelay(500);   /* 延时500个tick */
+        printf("LED1_Task Running,LED1_ON\r\n");
+        
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);  
+        vTaskDelay(500);   /* 延时500个tick */		 		
+        printf("LED1_Task Running,LED1_OFF\r\n");
+    }
+}
+
 
 /* USER CODE END 1 */
 
@@ -84,4 +105,34 @@ void USB_Rest(void)
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 	
 }
+
+/**********************************************************************
+  * @ 函数名  ： LED_Task
+  * @ 功能说明： 创建LED函数 并启用
+  * @ 参数    ：   
+  * @ 返回值  ： 无
+  ********************************************************************/
+static StackType_t LED_Task_Stack[128];
+static StaticTask_t LED_Task_TCB;
+static TaskHandle_t LED_Task_Handle;
+BaseType_t Led_Task_Init(void)
+{
+	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+
+	taskENTER_CRITICAL();           //进入临界区
+	  /* 创建LED_Task任务 */
+  LED_Task_Handle = xTaskCreateStatic((TaskFunction_t )LED1_Task, /* 任务入口函数 */
+                        (const char*    )"LED1_Task",/* 任务名字 */
+                        (uint16_t       )128,   /* 任务栈大小 */
+                        (void*          )NULL,	/* 任务入口函数参数 */
+                        (UBaseType_t    )2,	    /* 任务的优先级 */
+                        (StackType_t*  )LED_Task_Stack,
+												(StaticTask_t*  )&LED_Task_TCB);/* 任务控制块指针 */
+	if(LED_Task_Handle!=NULL)
+    printf("创建LED1_Task任务成功!\r\n");
+
+	 taskEXIT_CRITICAL();            //退出临界区
+		return xReturn;
+}
+
 /* USER CODE END 2 */

@@ -33,6 +33,8 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "tusb.h"
 #include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
