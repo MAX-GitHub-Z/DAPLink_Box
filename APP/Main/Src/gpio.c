@@ -42,11 +42,11 @@ static void LED1_Task(void* parameter)
     {
         HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
         vTaskDelay(500);   /* 延时500个tick */
-        printf("LED1_Task Running,LED1_ON\r\n");
+//        printf("LED1_Task Running,LED1_ON\r\n");
         
         HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);  
         vTaskDelay(500);   /* 延时500个tick */		 		
-        printf("LED1_Task Running,LED1_OFF\r\n");
+//        printf("LED1_Task Running,LED1_OFF\r\n");
     }
 }
 

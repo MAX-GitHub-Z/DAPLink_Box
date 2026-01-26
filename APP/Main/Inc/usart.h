@@ -29,6 +29,22 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#define UART_DMA_TX 0
+#if UART_DMA_TX
+	#define LOG(...)	   \ 
+		printf("[%s:%d] ", __FILE__, __LINE__); \
+    printf(__VA_ARGS__); \
+		PutUartDMA()  
+#else
+		#define LOG(...)	   \ 
+    printf(__VA_ARGS__); 
+#endif
+
+#define LOGDEBUG(...)		\
+				LOG("[%s:%d] ", __FILE__, __LINE__); \
+				LOG(__VA_ARGS__);
+
 
 /* USER CODE END Includes */
 
@@ -41,7 +57,7 @@ extern UART_HandleTypeDef huart1;
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+int PutUartDMA(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

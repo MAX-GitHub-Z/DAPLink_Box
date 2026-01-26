@@ -9,7 +9,7 @@
 
 #include "ff.h"			/* Basic definitions of FatFs */
 #include "diskio.h"		/* Declarations FatFs MAI */
-
+#include "usart.h"
 /* Example: Declarations of the platform and disk functions in the project */
 //#include "platform.h"
 //#include "storage.h"
@@ -190,71 +190,71 @@ DRESULT disk_ioctl (
 void Get_FatFsInfo(FRESULT ret)
 {
 		uint16_t ret_data = (uint16_t)ret;
-		printf("return %d \r\n",ret_data);
+		LOG("return %d \r\n",ret_data);
 		switch(ret_data)
 		{
 			case FR_OK:
-				printf("操作成功 \r\n");
+				LOG("操作成功 \r\n");
 				break;
 			case FR_DISK_ERR:
-				printf("在低级磁盘 I/O 层发生了严重错误 \r\n");
+				LOG("在低级磁盘 I/O 层发生了严重错误 \r\n");
 				break;
 			case FR_INT_ERR:
-				printf("断言失败 \r\n");
+				LOG("断言失败 \r\n");
 				break;
 			case FR_NOT_READY:
-				printf("物理驱动器无法工作 \r\n");
+				LOG("物理驱动器无法工作 \r\n");
 				break;
 			case FR_NO_FILE:
-				printf("找不到该文件 \r\n");
+				LOG("找不到该文件 \r\n");
 				break;
 			case FR_NO_PATH:
-				printf("找不到该路径 \r\n");
+				LOG("找不到该路径 \r\n");
 				break;
 			case FR_INVALID_NAME:
-				printf("路径名称格式无效 \r\n");
+				LOG("路径名称格式无效 \r\n");
 				break;
 			case FR_DENIED:
-				printf("由于禁止访问或目录已满而被拒绝访问 \r\n");
+				LOG("由于禁止访问或目录已满而被拒绝访问 \r\n");
 				break;
 			case FR_EXIST:
-				printf("由于禁止访问而被拒绝访问\r\n");
+				LOG("由于禁止访问而被拒绝访问\r\n");
 				break;
 			case FR_INVALID_OBJECT:
-				printf("文件/目录对象无效 \r\n");
+				LOG("文件/目录对象无效 \r\n");
 				break;
 			case FR_WRITE_PROTECTED:
-				printf("物理驱动器已写保护 \r\n");
+				LOG("物理驱动器已写保护 \r\n");
 				break;
 			case FR_INVALID_DRIVE:
-				printf("逻辑驱动器编号无效 \r\n");
+				LOG("逻辑驱动器编号无效 \r\n");
 				break;
 			case FR_NOT_ENABLED:
-				printf("该卷没有工作区域 \r\n");
+				LOG("该卷没有工作区域 \r\n");
 				break;
 			case FR_NO_FILESYSTEM:
-				printf("找不到有效的 FAT 卷  \r\n");
+				LOG("找不到有效的 FAT 卷  \r\n");
 				break;
 			case FR_MKFS_ABORTED:
-				printf("由于某些问题，f_mkfs 函数被中止  \r\n");
+				LOG("由于某些问题，f_mkfs 函数被中止  \r\n");
 				break;
 			case FR_TIMEOUT:
-				printf("在规定时间内无法控制该卷 \r\n");
+				LOG("在规定时间内无法控制该卷 \r\n");
 				break;
 			case FR_LOCKED:
-				printf("根据文件共享策略拒绝执行操作 \r\n");
+				LOG("根据文件共享策略拒绝执行操作 \r\n");
 				break;
 			case FR_NOT_ENOUGH_CORE:
-				printf("LFN 工作缓冲区无法分配，因为给定的缓冲区大小不足或者路径过长 \r\n");
+				LOG("LFN 工作缓冲区无法分配，因为给定的缓冲区大小不足或者路径过长 \r\n");
 				break;
 			case FR_TOO_MANY_OPEN_FILES:
-				printf("打开文件的数量超过 FF_FS_LOCK 的限制 \r\n");
+				LOG("打开文件的数量超过 FF_FS_LOCK 的限制 \r\n");
 				break;
 			case FR_INVALID_PARAMETER:
-				printf("给定的参数无效 \r\n");
+				LOG("给定的参数无效 \r\n");
 				break;
 			default:
-				printf("异常的返回值%d \r\n",ret_data);
+				LOG("异常的返回值%d \r\n",ret_data);
 				break;
 		}
 }
@@ -269,52 +269,52 @@ void GET_SDInfo(const TCHAR* path,FATFS* fatfs)
 	
 	uint64_t CardInfodata;
 	float sd_sizeof_all=0,sd_sizeof_used=0,sd_sizeof_usable=0;
-	printf("***************************************\r\n");
+	LOG("***************************************\r\n");
 	CardInfodata= CardInfo.CardType;
-	printf("SD卡的类型: %llu ",CardInfodata);
+	LOG("SD卡的类型: %llu ",CardInfodata);
 	switch(CardInfodata)
 	{
 		case CARD_SDSC:
-			printf("SC 标准SD卡 \r\n");
+			LOG("SC 标准SD卡 \r\n");
 			break;
 		case CARD_SDHC_SDXC:
-			printf("高容量SD卡（SDHC，2GB~32GB）或扩展容量SD卡（SDXC，32GB~2TB）\r\n");
+			LOG("高容量SD卡（SDHC，2GB~32GB）或扩展容量SD卡（SDXC，32GB~2TB）\r\n");
 			break;
 		case CARD_SECURED:
-			printf("CURED 安全数字卡 \r\n");
+			LOG("CURED 安全数字卡 \r\n");
 			break;
 		default:
-			printf("未定义的SD卡类型\r\n");
+			LOG("未定义的SD卡类型\r\n");
 			break;
 	}
 	CardInfodata= CardInfo.CardVersion;
-	printf("SD卡的版本: %llu ",CardInfodata);
+	LOG("SD卡的版本: %llu ",CardInfodata);
 	switch(CardInfodata)
 	{
 		case CARD_V1_X:
-			printf("V1.XX \r\n");
+			LOG("V1.XX \r\n");
 			break;
 		case CARD_V2_X:
-			printf("V2.XX \r\n");
+			LOG("V2.XX \r\n");
 			break;
 		default:
-			printf("未定义的SD卡版本\r\n");
+			LOG("未定义的SD卡版本\r\n");
 			break;
 	}
 	CardInfodata= CardInfo.Class;
-	printf("SD卡的类型··········: %llu \r\n",CardInfodata);
+	LOG("SD卡的类型··········: %llu \r\n",CardInfodata);
 	CardInfodata= CardInfo.RelCardAdd;
-	printf("SD卡的相对地址······: %llx \r\n",CardInfodata);
+	LOG("SD卡的相对地址······: %llx \r\n",CardInfodata);
 	CardInfodata= CardInfo.BlockNbr;
-	printf("SD卡的总扇区数大小··: %llu \r\n",CardInfodata);
+	LOG("SD卡的总扇区数大小··: %llu \r\n",CardInfodata);
 	CardInfodata= CardInfo.BlockSize;
-	printf("SD卡的单个扇区大小··: %llu  字节\r\n",CardInfodata);
+	LOG("SD卡的单个扇区大小··: %llu  字节\r\n",CardInfodata);
 	CardInfodata= CardInfo.LogBlockNbr;
-	printf("SD卡的逻辑扇区数····: %llu \r\n",CardInfodata);
+	LOG("SD卡的逻辑扇区数····: %llu \r\n",CardInfodata);
 	CardInfodata= CardInfo.LogBlockSize;
-	printf("SD卡的单个逻辑扇大小: %llu  字节\r\n",CardInfodata);
+	LOG("SD卡的单个逻辑扇大小: %llu  字节\r\n",CardInfodata);
 	sd_sizeof_all = CardInfo.BlockNbr*1.0*CardInfo.BlockSize;
-	printf("SD卡的总容量大小····: %.0f  字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
+	LOG("SD卡的总容量大小····: %.0f  字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
 		sd_sizeof_all,sd_sizeof_all/1024,sd_sizeof_all/1024/1024,sd_sizeof_all/1024/1024/1024);
 
 	
@@ -322,19 +322,19 @@ void GET_SDInfo(const TCHAR* path,FATFS* fatfs)
     //Get_FatFsInfo(res_flash);
     if(res_flash != FR_OK)
     {
-        printf(">>SD卡未挂载或挂载失败<<\r\n");
+        LOG(">>SD卡未挂载或挂载失败<<\r\n");
     }
     else
     {
-        //printf(">>读取剩余空间成功<<\r\n");
+        //LOG(">>读取剩余空间成功<<\r\n");
         sd_sizeof_usable = nclst * fatfs->csize;
-        printf("SD卡的可用容量大小··: %.0f 字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
+        LOG("SD卡的可用容量大小··: %.0f 字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
             sd_sizeof_usable,sd_sizeof_usable/1024,sd_sizeof_usable/1024/1024,sd_sizeof_usable/1024/1024/1024);
         sd_sizeof_used = sd_sizeof_all - sd_sizeof_usable;
-        printf("SD卡的已用容量大小··: %.0f 字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
+        LOG("SD卡的已用容量大小··: %.0f 字节 %.0f kb %.0f Mb %.2f Gb\r\n",\
             sd_sizeof_used,sd_sizeof_used/1024,sd_sizeof_used/1024/1024,sd_sizeof_used/1024/1024/1024);
     }
-			printf("***************************************\r\n");
+			LOG("***************************************\r\n");
 }
 #endif
 

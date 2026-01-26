@@ -119,13 +119,13 @@ int main(void)
 	ret= f_mount(&SDFatFs, "0:", 1);
 	if(ret ==FR_OK)
 	{
-		printf("挂载成功 \r\n");
+		LOG("挂载成功 \r\n");
 		GET_SDInfo(baes_path,&SDFatFs);
-//		FatFS_Test();
+		FatFS_Test();
 	}
 	else
 	{
-		printf("挂载失败 \r\n");
+		LOG("挂载失败 \r\n");
 //		Get_FatFsInfo(ret);
 	}
 	Led_Task_Init();
@@ -161,7 +161,7 @@ int main(void)
 
 
 	
-	printf("运行到此处时 表示失败 \r\n");
+	LOG("运行到此处时 表示失败 \r\n");
   /* USER CODE BEGIN WHILE */
   while (1)
   {
