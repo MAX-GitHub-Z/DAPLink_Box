@@ -379,7 +379,7 @@
  这些函数使用动态分配的内存来创建 FreeRTOS 对象（任务、队列等）。将该值设置为 0 可以排除在构建中使用动态分配对象的能力。
  默认值为 1，如果未定义则保持此值为 1。见
 * https://www.freertos.org/静态内存分配与动态内存分配.html*/
-#define configSUPPORT_DYNAMIC_ALLOCATION             0
+#define configSUPPORT_DYNAMIC_ALLOCATION             1
 
 /* Sets the total size of the FreeRTOS heap, in bytes, when heap_1.c, heap_2.c
  * or heap_4.c are included in the build.  This value is defaulted to 4096 bytes but
@@ -502,7 +502,7 @@
  * processing time used by each task.  Set to 0 to not collect the data.  The
  * application writer needs to provide a clock source if set to 1.  Defaults to 0
  * if left undefined.  See https://www.freertos.org/rtos-run-time-stats.html. */
-#define configGENERATE_RUN_TIME_STATS           0
+#define configGENERATE_RUN_TIME_STATS           1
 
 /* Set configUSE_TRACE_FACILITY to include additional task structure members
  * are used by trace and visualisation functions and tools.  Set to 0 to exclude
@@ -517,7 +517,14 @@
  * functions introduce a dependency on string formatting functions that would
  * otherwise not exist - hence they are kept separate.  Defaults to 0 if left
  * undefined. */
-#define configUSE_STATS_FORMATTING_FUNCTIONS    0
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+
+#if configGENERATE_RUN_TIME_STATS
+#define configRUN_TIME_COUNTER_TYPE uint64_t
+#include "cpu_uasge.h"
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ConfigureTimerForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE() GetRunTimeCounterValue()
+#endif
 
 /******************************************************************************/
 /* Co-routine related definitions. ********************************************/

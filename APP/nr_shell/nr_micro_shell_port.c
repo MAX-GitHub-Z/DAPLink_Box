@@ -120,7 +120,46 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
 
 }
 
+static void shell_tack(void *param) ;
+#define STACK_SIZE 256
+StaticTask_t xTaskShellBuffer;
+StackType_t xStackShell[ STACK_SIZE ];
+TaskHandle_t xTaskHandleShell;
+void shell_tack_init(void)
+{
+    xTaskHandleShell = xTaskCreateStatic(shell_tack, "shell", STACK_SIZE, NULL, 2, xStackShell, &xTaskShellBuffer);
+}
 
+extern uint8_t uart_rx_tmp[];/*接收的备份数据*/
+extern uint16_t rx_buffer_rx_tmp_len;
+static void shell_tack(void *param) 
+{
+  (void) param;
+    uint32_t ulNotifiedValue;
+    BaseType_t xResult;
+    
+    shell_init();
+    shell_init_log();
+    while(1)
+    {
+                // 等待通知（阻塞等待）
+        xResult = xTaskNotifyWait(0x00,         // 进入前清除所有位
+                                 0xffffffffU,     // 退出时清除所有位
+                                 &ulNotifiedValue, 
+                                 portMAX_DELAY);
+        if(xResult == pdPASS)
+        {
+            // 收到通知，任务就绪并执行处理
+            for(uint16_t i=0;i<rx_buffer_rx_tmp_len;i++)
+            {
+                shell(uart_rx_tmp[i]);
+            }
+            //printf("shell \r\n");  // 你的任务处理函数
+            // 处理完成后，任务再次进入等待状态（挂起）
+        }
+        
+    }
+}
 
 
 /******************* (C) COPYRIGHT 2025 Ji Youzhou ****************************/

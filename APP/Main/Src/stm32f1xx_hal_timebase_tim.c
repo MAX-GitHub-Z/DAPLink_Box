@@ -155,6 +155,10 @@ void TIM6_IRQHandler(void)
   * @param  htim : TIM handle
   * @retval None
   */
+#include "FreeRTOSConfig.h"
+#if configGENERATE_RUN_TIME_STATS
+extern volatile configRUN_TIME_COUNTER_TYPE cpu_run_time;
+#endif
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
@@ -163,6 +167,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM6)
   {
     HAL_IncTick();
+		#if configGENERATE_RUN_TIME_STATS
+		cpu_run_time++;
+		#endif
   }
   /* USER CODE BEGIN Callback 1 */
 

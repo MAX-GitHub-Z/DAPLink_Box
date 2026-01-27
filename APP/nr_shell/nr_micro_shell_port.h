@@ -36,6 +36,7 @@ extern "C" {
 void shell_output(uint8_t ch);
 void shell_output_str(uint8_t *buff,uint16_t len);
 int cmd_out(uint8_t argc, char **argv);
+void shell_tack_init(void);
 #define shell_putc(x) shell_output((x))
 
 /* Optional configuration macros */

@@ -119,30 +119,22 @@ int main(void)
 	ret= f_mount(&SDFatFs, "0:", 1);
 	if(ret ==FR_OK)
 	{
-		LOG("挂载成功 \r\n");
+		printf("挂载成功 \r\n");
 		GET_SDInfo(baes_path,&SDFatFs);
 		FatFS_Test();
 	}
 	else
 	{
-		LOG("挂载失败 \r\n");
+		printf("挂载失败 \r\n");
 //		Get_FatFsInfo(ret);
 	}
 	Led_Task_Init();
 	  /* 启动任务调度 */     
 	  /* USER CODE END 2 */
 	
-	shell_init();
+	shell_tack_init();
 	DAP_Setup();
 	
-  // init device stack on configured roothub port
-//  tusb_rhport_init_t dev_init = {
-//    .role = TUSB_ROLE_DEVICE,
-//    .speed = TUSB_SPEED_AUTO
-//  };
-//  tusb_init(BOARD_TUD_RHPORT, &dev_init);
-
-//  board_init_after_tusb();
 	
 
 	  // Create task for: tinyusb, blinky, cdc

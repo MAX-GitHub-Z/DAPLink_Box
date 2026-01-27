@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>7</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -463,6 +463,11 @@
               <FileName>stm32f1xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\stm32f1xx_hal_timebase_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_usage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\cpu_usage.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -938,6 +943,11 @@
               <FileName>port.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\FreeRTOS\portable\GCC\ARM_CM3\port.c</FilePath>
+            </File>
+            <File>
+              <FileName>heap_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FreeRTOS\portable\MemMang\heap_4.c</FilePath>
             </File>
           </Files>
         </Group>

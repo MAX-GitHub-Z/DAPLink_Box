@@ -235,6 +235,10 @@ int cmd_time(uint8_t argc, char **argv)
 }
 #endif
 
+
+
+#include "FreeRTOSConfig.h"
+extern int printCPUStats(uint8_t argc, char **argv);
 struct cmd cmd_table[] = {
 	{ .name = "help", .func = cmd_help, .desc = "show this help" },
 	{ .name = "clear", .func = cmd_clear, .desc = "clear screen" },
@@ -255,6 +259,10 @@ struct cmd cmd_table[] = {
 	{ .name = "time", .func = cmd_time, .desc = "measure the cmd's execution time" },
 #endif
 	{.name = "shell",.func = shell_cmd,.desc = "Shell-related functions Please enter <shell help>"},
+	
+#if configGENERATE_RUN_TIME_STATS
+	{.name = "CPU_State",.func = printCPUStats,.desc = "is printCPUStats"},
+#endif
 };
 
 const uint16_t cmd_table_size = sizeof(cmd_table) / sizeof(cmd_table[0]);

@@ -26,6 +26,7 @@
 
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
+DMA_HandleTypeDef hdma_usart1_rx;
 uint8_t rx_data;
 /* USART1 init function */
 
@@ -52,7 +53,15 @@ void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-	HAL_UART_Receive_IT(&huart1, &rx_data, 1);
+	  /* USER CODE BEGIN USART1_Init 2 */
+  __HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);
+  __HAL_UART_ENABLE_IT(&huart1,UART_IT_IDLE);
+  /* USER CODE END USART1_Init 2 */
+//    /*开始从中断进行接收*/
+    if(HAL_UART_Receive_IT(&huart1, &rx_data, 1) != HAL_OK)
+    {
+        printf("usart error\r\n");
+    }
   /* USER CODE END USART1_Init 2 */
 
 }
@@ -100,15 +109,31 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     }
 
     __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart1_tx);
-    /* USART1 interrupt Init */
-		__HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);
-		__HAL_UART_ENABLE_IT(&huart1,UART_IT_IDLE);
-    HAL_NVIC_SetPriority(USART1_IRQn, 2, 0);
+
+    /* USART1_RX Init */
+    hdma_usart1_rx.Instance = DMA1_Channel5;
+    hdma_usart1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_usart1_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart1_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart1_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Init(&hdma_usart1_rx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart1_rx);
+		HAL_NVIC_SetPriority(USART1_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
-  /* USER CODE BEGIN USART1_MspInit 1 */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 2, 1);
+		  /* DMA1_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
-  /* USER CODE END USART1_MspInit 1 */
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+		
   }
 }
 
@@ -140,17 +165,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   }
 }
 
-/* USER CODE BEGIN 1 */
-void USART1_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART1_IRQn 0 */
-
-  /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
-  /* USER CODE BEGIN USART1_IRQn 1 */
-
-  /* USER CODE END USART1_IRQn 1 */
-}
 
 
 void DMA1_Channel4_IRQHandler(void)
@@ -165,11 +179,6 @@ void DMA1_Channel4_IRQHandler(void)
 }
 
 
-#define uartBufferLen 256
-uint8_t uartBufferTx[uartBufferLen];
-uint8_t uartBufferRx[uartBufferLen];
-uint32_t uartBufferTXIndex=0;
-uint32_t uartBufferRXIndex=0;
 int fputc(int ch, FILE *f)
 {
  #if UART_DMA_TX == 0
@@ -182,29 +191,61 @@ int fputc(int ch, FILE *f)
  
 }
 
-int PutUartDMA(void)
+
+#define UART_BUF_LEN  256
+uint8_t uart_rx[UART_BUF_LEN]={};
+uint8_t uart_rx_tmp[UART_BUF_LEN]={};/*接收的备份数据*/
+uint16_t rx_buffer_rx_tmp_len=0;
+uint8_t uart_tx[UART_BUF_LEN]={};
+uint16_t rx_buffer_len=0;
+extern TaskHandle_t xTaskHandleShell;;
+#include "FreeRTOS.h"
+#include "task.h"
+void USART1_IRQHandler(void)
 {
-	HAL_StatusTypeDef ret=0;
-	ret = HAL_UART_Transmit_DMA(&hdma_usart1_tx,uartBufferTx,uartBufferTXIndex);
-	uartBufferTXIndex = 0;
-	if(ret ==HAL_OK)
-			return 0;
+  /* USER CODE BEGIN USART1_IRQn 0 */
+    
+    if(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_IDLE))
+    {
+//            printf("%s \r\n",uart_rx);
+        
+        __HAL_UART_CLEAR_PEFLAG(&huart1);
+        rx_buffer_rx_tmp_len = rx_buffer_len;
+        memcpy(uart_rx_tmp,uart_rx,rx_buffer_rx_tmp_len);
+        
+        // 发送任务通知，唤醒目标任务
+        xTaskNotify(xTaskHandleShell, 
+                       0x01,  // 通知值（可根据需要传递数据）
+                       eNoAction);  // 不更新通知值
+        /*处理串口信息*/
+        memset(uart_rx,0,rx_buffer_len);
+        rx_buffer_len = 0;
+        
+    }
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+//    __HAL_UART_CLEAR_PEFLAG(&huart1);
+    
+    HAL_UART_Receive_IT(&huart1, &rx_data, 1);
+  /* USER CODE END USART1_IRQn 1 */
 }
+// 接收完成回调
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart == &huart1)
-	{
-		if(uartBufferRXIndex < uartBufferLen)
-			uartBufferRx[uartBufferRXIndex++]=rx_data;
-		HAL_UART_Receive_IT(&huart1, &rx_data, 1);
-	}
+    if (huart == &huart1)
+    {
+        // 将接收到的数据存入缓冲区
+        if (rx_buffer_len < sizeof(uart_rx))
+        {
+            uart_rx[rx_buffer_len] = rx_data;
+            rx_buffer_len++;
+        }
+        // 继续接收下一个字节
+        HAL_UART_Receive_IT(huart, &rx_data, 1);
+    }
 }
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-	if(huart == &huart1)
-	{
-			printf("%s\r\n",uartBufferRx);
-	}
-}
+
 /* USER CODE END 1 */
