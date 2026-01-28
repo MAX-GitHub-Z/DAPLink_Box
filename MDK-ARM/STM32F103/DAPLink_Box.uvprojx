@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE,STM32F1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell;..\..\fatfs;..\..\APP\SD_FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\portable\GCC\ARM_CM3;..\..\TinyUSB\scr\osal</IncludePath>
+              <IncludePath>..\..\APP\Main\Inc;..\..\APP\USB_DEVICE\App;..\..\APP\USB_DEVICE\Target;..\..\Drivers\STM32F1xx_HAL_Driver\Inc;..\..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy;..\..\Drivers\CMSIS\Include;..\..\Drivers\CMSIS\Device\ST\STM32F1xx\Include;..\..\APP\DAP;..\..\TinyUSB\scr;..\..\TinyUSB\bsp;..\..\TinyUSB\STM32_USB_Device_Library\Core\Inc;..\..\CMSIS-DAP\Include;..\..\nr_micro_shell\inc;..\..\APP\nr_shell;..\..\fatfs;..\..\APP\SD_FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\portable\GCC\ARM_CM3;..\..\TinyUSB\scr\osal;..\..\FlashAlgo\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -468,6 +468,11 @@
               <FileName>cpu_usage.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\APP\Main\Src\cpu_usage.c</FilePath>
+            </File>
+            <File>
+              <FileName>DAP_diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\APP\Main\Src\DAP_diskio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -808,6 +813,21 @@
               <FileName>UART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\CMSIS-DAP\Source\UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWD_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\SWD_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWD_host.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\SWD_host.c</FilePath>
+            </File>
+            <File>
+              <FileName>SWD_opt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CMSIS-DAP\Source\SWD_opt.c</FilePath>
             </File>
           </Files>
         </Group>

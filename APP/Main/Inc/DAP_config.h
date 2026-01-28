@@ -157,19 +157,25 @@ This information includes:
 /// The Debug Unit may be part of an evaluation board and always connected to a fixed
 /// known device. In this case a Device Vendor, Device Name, Board Vendor and Board Name strings
 /// are stored and may be used by the debugger or IDE to configure device parameters.
-#define TARGET_FIXED            0               ///< Target: 1 = known, 0 = unknown;
+#define TARGET_FIXED            1               ///< Target: 1 = known, 0 = unknown;
 
 #define TARGET_DEVICE_VENDOR    "Arm"           ///< String indicating the Silicon Vendor
 #define TARGET_DEVICE_NAME      "Cortex-M"      ///< String indicating the Target Device
 #define TARGET_BOARD_VENDOR     "Arm"           ///< String indicating the Board Vendor
 #define TARGET_BOARD_NAME       "Arm board"     ///< String indicating the Board Name
+#define TARGET_VendorString     "DAP"           ///< String indicating the Board Vendor
+#define TARGET_ProductString    "DAPLink-Box"     ///< String indicating the Board Name
+#define TARGET_GetProductString "112233"     ///< String indicating the Board Name
 
 #if TARGET_FIXED != 0
 #include <string.h>
-static const char TargetDeviceVendor [] = TARGET_DEVICE_VENDOR;
-static const char TargetDeviceName   [] = TARGET_DEVICE_NAME;
-static const char TargetBoardVendor  [] = TARGET_BOARD_VENDOR;
-static const char TargetBoardName    [] = TARGET_BOARD_NAME;
+static const char TargetDeviceVendor 		[] = TARGET_DEVICE_VENDOR;
+static const char TargetDeviceName   		[] = TARGET_DEVICE_NAME;
+static const char TargetBoardVendor  		[] = TARGET_BOARD_VENDOR;
+static const char TargetBoardName    		[] = TARGET_BOARD_NAME;
+static const char TargetVendorString 		[] = TARGET_VendorString;
+static const char TargetProductString  	[] = TARGET_ProductString;
+static const char TargetGetProductString[] = TARGET_GetProductString;
 #endif
 
 /** Get Vendor Name string.
@@ -177,8 +183,16 @@ static const char TargetBoardName    [] = TARGET_BOARD_NAME;
 \return String length (including terminating NULL character) or 0 (no string).
 */
 __STATIC_INLINE uint8_t DAP_GetVendorString (char *str) {
+#if TARGET_FIXED != 0
+  uint8_t len;
+
+  strcpy(str, TargetVendorString);
+  len = (uint8_t)(strlen(TargetVendorString) + 1U);
+  return (len);
+#else
   (void)str;
   return (0U);
+#endif
 }
 
 /** Get Product Name string.
@@ -186,8 +200,16 @@ __STATIC_INLINE uint8_t DAP_GetVendorString (char *str) {
 \return String length (including terminating NULL character) or 0 (no string).
 */
 __STATIC_INLINE uint8_t DAP_GetProductString (char *str) {
+#if TARGET_FIXED != 0
+  uint8_t len;
+
+  strcpy(str, TargetProductString);
+  len = (uint8_t)(strlen(TargetProductString) + 1U);
+  return (len);
+#else
   (void)str;
   return (0U);
+#endif
 }
 
 /** Get Serial Number string.
@@ -195,8 +217,16 @@ __STATIC_INLINE uint8_t DAP_GetProductString (char *str) {
 \return String length (including terminating NULL character) or 0 (no string).
 */
 __STATIC_INLINE uint8_t DAP_GetSerNumString (char *str) {
+#if TARGET_FIXED != 0
+  uint8_t len;
+
+  strcpy(str, TargetGetProductString);
+  len = (uint8_t)(strlen(TargetGetProductString) + 1U);
+  return (len);
+#else
   (void)str;
   return (0U);
+#endif
 }
 
 /** Get Target Device Vendor string.
